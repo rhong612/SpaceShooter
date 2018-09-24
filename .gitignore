@@ -20,6 +20,14 @@
 *.pyc
 .svn/
 *.log
+icon.rc
+addons.make
+*.dll
+*.exe
+*.exp
+*.ilk
+*.lib
+*.pdb
 
 ########################
 # IDE files which should
@@ -48,6 +56,12 @@ xcuserdata
 *.ilk
 *.aps
 ipch/
+.vs/
+icon.rc
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
 
 # Eclipse
 .metadata
