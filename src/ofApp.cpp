@@ -4,13 +4,17 @@
 void ofApp::setup(){
 	ofSetVerticalSync(true);
 	sprite.image.loadImage("images/sprite.png");
-	sprite.speed = 200;
+	sprite.speed = 500;
 	sprite.width = sprite.image.getWidth();
 	sprite.height = sprite.image.getHeight();
 	sprite.trans.x = ofGetWidth() / 2 - sprite.width / 2;
 	sprite.trans.y = ofGetHeight() / 2 - sprite.height / 2;
 	moveDir = MoveStop;
 	idle = true;
+	leftPressed = false;
+	rightPressed = false;
+	upPressed = false;
+	downPressed = false;
 	
 	missileEmitter.sys = &missileSystem;
 	missileEmitter.path = "images/missile.png";
@@ -103,15 +107,19 @@ void ofApp::keyPressed(int key){
 				missileEmitter.start();
 				break;
 			case OF_KEY_RIGHT:
+				rightPressed = true;
 				moveSprite(MoveRight);
 				break;
 			case OF_KEY_LEFT:
+				leftPressed = true;
 				moveSprite(MoveLeft);
 				break;
 			case OF_KEY_UP:
+				upPressed = true;
 				moveSprite(MoveUp);
 				break;
 			case OF_KEY_DOWN:
+				downPressed = true;
 				moveSprite(MoveDown);
 				break;
 		}
@@ -128,10 +136,28 @@ void ofApp::keyReleased(int key){
 			missileEmitter.stop();
 			break;
 		case OF_KEY_LEFT:
+			leftPressed = false;
+			if (!leftPressed && !rightPressed && !upPressed && !downPressed) {
+				stopSprite();
+			}
+			break;
 		case OF_KEY_RIGHT:
+			rightPressed = false;
+			if (!leftPressed && !rightPressed && !upPressed && !downPressed) {
+				stopSprite();
+			}
+			break;
 		case OF_KEY_UP:
+			upPressed = false;
+			if (!leftPressed && !rightPressed && !upPressed && !downPressed) {
+				stopSprite();
+			}
+			break;
 		case OF_KEY_DOWN:
-			stopSprite();
+			downPressed = false;
+			if (!leftPressed && !rightPressed && !upPressed && !downPressed) {
+				stopSprite();
+			}
 			break;
 	}
 }

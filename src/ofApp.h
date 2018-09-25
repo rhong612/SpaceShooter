@@ -83,6 +83,10 @@ class ofApp : public ofBaseApp{
 		void checkTurretBounds();
 
 		bool idle;
+		bool leftPressed;
+		bool rightPressed;
+		bool upPressed;
+		bool downPressed;
 		ofVec3f mouseLast;
 
 		Sprite sprite;
