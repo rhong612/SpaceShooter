@@ -4,7 +4,7 @@
 void ofApp::setup(){
 	ofSetVerticalSync(true);
 	sprite.image.loadImage("images/sprite.png");
-	sprite.speed = 500;
+	sprite.speed = 600;
 	sprite.width = sprite.image.getWidth();
 	sprite.height = sprite.image.getHeight();
 	sprite.trans.x = ofGetWidth() / 2 - sprite.width / 2;
@@ -19,7 +19,7 @@ void ofApp::setup(){
 	missileEmitter.sys = &missileSystem;
 	missileEmitter.path = "images/missile.png";
 	missileEmitter.velocity = ofVec2f(0, -500);
-	missileEmitter.lifespan = 10000;
+	missileEmitter.lifespan = 3000;
 
 	panel.setup();
 	panel.add(rateSlider.setup("rate", 10, 0, 70));
