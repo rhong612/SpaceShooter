@@ -19,7 +19,8 @@ void Emitter::loadEmitSound(string path) {
 }
 
 void Emitter::emit(float x, float y) {
-	if (started && ofGetElapsedTimeMillis() - lastSpawned >= rate) {
+	rateCounter++;
+	if (started && rateCounter >= rate) {
 		Sprite sprite;
 		sprite.image.loadImage(path);
 		sprite.width = sprite.image.getWidth();
@@ -32,7 +33,7 @@ void Emitter::emit(float x, float y) {
 		sprite.lifespan = lifespan;
 		sys->add(sprite);
 		soundPlayer.play();
-		lastSpawned = ofGetElapsedTimeMillis();
+		rateCounter = 0;
 	}
 }
 

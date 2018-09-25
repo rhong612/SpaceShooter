@@ -22,7 +22,7 @@ void ofApp::setup(){
 	missileEmitter.lifespan = 10000;
 
 	panel.setup();
-	panel.add(rateSlider.setup("rate", 70, 0, 500));
+	panel.add(rateSlider.setup("rate", 10, 0, 70));
 	panel.add(directionSlider.setup("direction", 180, 0, 360));
 	missileEmitter.direction = directionSlider;
 	missileEmitter.rate = rateSlider;

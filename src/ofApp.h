@@ -48,10 +48,10 @@ public:
 	void loadEmitSound(string);
 	SpriteSystem *sys;
 	float rate;
+	float rateCounter;
 	ofVec2f velocity;
 	float lifespan;
 	bool started;
-	float lastSpawned;
 	float direction;
 	string path;
 	ofSoundPlayer soundPlayer;
