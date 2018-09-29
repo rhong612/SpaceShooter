@@ -21,6 +21,13 @@ void ofApp::setup(){
 	missileEmitter.velocity = ofVec2f(0, -500);
 	missileEmitter.lifespan = 3000;
 
+	enemyEmitter.sys = &enemySystem;
+	enemyEmitter.path = "images/enemy.png";
+	enemyEmitter.velocity = ofVec2f(0, 500);
+	enemyEmitter.lifespan = 3000;
+	enemyEmitter.direction = 180;
+	enemyEmitter.rate = 10;
+
 	panel.setup();
 	panel.add(rateSlider.setup("rate", 10, 0, 70));
 	panel.add(directionSlider.setup("direction", 180, 0, 360));
@@ -37,6 +44,10 @@ void ofApp::update(){
 	updateSprite();
 	missileSystem.update();
 	missileEmitter.emit(sprite.trans.x + sprite.width / 2, sprite.trans.y);
+
+
+	enemySystem.update();
+	enemyEmitter.emit(ofGetWidth() / 2, 0);
 }
 
 void ofApp::updateSprite() {
@@ -81,6 +92,7 @@ void ofApp::draw(){
 		checkTurretBounds();
 		sprite.draw();
 		missileSystem.draw();
+		enemySystem.draw();
 	}
 }
 
@@ -105,6 +117,7 @@ void ofApp::keyPressed(int key){
 		switch (key) {
 			case ' ':
 				missileEmitter.start();
+				enemyEmitter.start();
 				break;
 			case OF_KEY_RIGHT:
 				rightPressed = true;

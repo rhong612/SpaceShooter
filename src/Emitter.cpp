@@ -32,7 +32,9 @@ void Emitter::emit(float x, float y) {
 		sprite.birthtime = ofGetElapsedTimeMillis();
 		sprite.lifespan = lifespan;
 		sys->add(sprite);
-		soundPlayer.play();
+		if (soundPlayer.isLoaded()) {
+			soundPlayer.play();
+		}
 		rateCounter = 0;
 	}
 }

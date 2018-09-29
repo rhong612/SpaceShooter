@@ -90,10 +90,12 @@ class ofApp : public ofBaseApp{
 		ofVec3f mouseLast;
 
 		Sprite sprite;
-		Sprite missileSprite;
 		SpriteSystem missileSystem;
 		Emitter missileEmitter;
 		MoveDir moveDir;
+
+		Emitter enemyEmitter;
+		SpriteSystem enemySystem;
 
 		
 		ofxFloatSlider rateSlider;
