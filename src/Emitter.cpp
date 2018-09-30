@@ -18,11 +18,13 @@ void Emitter::loadEmitSound(string path) {
 	soundPlayer.load(path);
 }
 
+void Emitter::loadSpriteImage(string path) {
+	sprite.image.loadImage(path);
+}
+
 void Emitter::emit(float x, float y) {
 	rateCounter++;
 	if (started && rateCounter >= rate) {
-		Sprite sprite;
-		sprite.image.loadImage(path);
 		sprite.width = sprite.image.getWidth();
 		sprite.height = sprite.image.getHeight();
 		sprite.trans.x = x - sprite.width / 2;

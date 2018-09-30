@@ -46,6 +46,7 @@ public:
 	void emit(float, float);
 	void rotate(ofVec2f*);
 	void loadEmitSound(string);
+	void loadSpriteImage(string);
 	SpriteSystem *sys;
 	float rate;
 	float rateCounter;
@@ -53,8 +54,8 @@ public:
 	float lifespan;
 	bool started;
 	float direction;
-	string path;
 	ofSoundPlayer soundPlayer;
+	Sprite sprite;
 };
 
 
@@ -81,6 +82,7 @@ class ofApp : public ofBaseApp{
 		void moveSprite(MoveDir);
 		void stopSprite();
 		void checkTurretBounds();
+		void checkCollisions();
 
 		bool idle;
 		bool leftPressed;

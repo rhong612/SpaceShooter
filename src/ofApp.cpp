@@ -17,12 +17,12 @@ void ofApp::setup(){
 	downPressed = false;
 	
 	missileEmitter.sys = &missileSystem;
-	missileEmitter.path = "images/missile.png";
+	missileEmitter.loadSpriteImage("images/missile.png");
 	missileEmitter.velocity = ofVec2f(0, -500);
 	missileEmitter.lifespan = 3000;
 
 	enemyEmitter.sys = &enemySystem;
-	enemyEmitter.path = "images/enemy.png";
+	enemyEmitter.loadSpriteImage("images/enemy.png");
 	enemyEmitter.velocity = ofVec2f(0, 500);
 	enemyEmitter.lifespan = 3000;
 	enemyEmitter.direction = 180;
@@ -42,19 +42,36 @@ void ofApp::update(){
 	missileEmitter.rate = rateSlider;
 	missileEmitter.direction = directionSlider;
 	updateSprite();
+	checkTurretBounds();
 	missileSystem.update();
 	missileEmitter.emit(sprite.trans.x + sprite.width / 2, sprite.trans.y);
 
 
 	enemySystem.update();
 	enemyEmitter.emit(ofGetWidth() / 2, 0);
+
+	checkCollisions();
+}
+
+void ofApp::checkCollisions() {
+	for (vector<Sprite>::iterator it = enemySystem.sprites.begin(); it != enemySystem.sprites.end(); it++) {
+		for (vector<Sprite>::iterator missileIter = missileSystem.sprites.begin(); missileIter != missileSystem.sprites.end(); missileIter++) {
+			float hDistance = abs(it->trans.x - missileIter->trans.x);
+			float vDistance = abs(it->trans.y - missileIter->trans.y);
+			float hContactDistance = it->width / 2 + missileIter->width / 2;
+			float vContactDistance = it->height / 2 + missileIter->height / 2;
+			if (hDistance < hContactDistance && vDistance < vContactDistance) {
+				it->lifespan = 0;
+				missileIter->lifespan = 0;
+			}
+		}
+	}
 }
 
 void ofApp::updateSprite() {
 	float dist = sprite.speed * 1 / ofGetFrameRate();
 	ofVec3f dir;
-	ofRectangle r = ofGetWindowRect();
-	
+
 	switch (moveDir)
 	{
 		case MoveUp:
@@ -89,7 +106,6 @@ void ofApp::draw(){
 	}
 	else {
 		panel.draw();
-		checkTurretBounds();
 		sprite.draw();
 		missileSystem.draw();
 		enemySystem.draw();

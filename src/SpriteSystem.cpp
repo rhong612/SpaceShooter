@@ -35,6 +35,11 @@ void SpriteSystem::update() {
 			tmp = sprites.erase(s);
 			s = tmp;
 		}
+		//If sprite is out of bounds, delete it
+		else if (s->trans.x > ofGetWidth() + s->width || s->trans.y > ofGetHeight() + s->height || s->trans.x < -1.0 * s->width || s->trans.y < -1.0 * s->height) {
+			tmp = sprites.erase(s);
+			s = tmp;
+		}
 		else s++;
 	}
 
