@@ -77,6 +77,13 @@ void ofApp::update(){
 void ofApp::checkCollisions() {
 	for (vector<Sprite>::iterator it = enemySystem.sprites.begin(); it != enemySystem.sprites.end(); it++) {
 		for (vector<Sprite>::iterator missileIter = missileSystem.sprites.begin(); missileIter != missileSystem.sprites.end(); missileIter++) {
+			if (missileIter->trans.x <= it->trans.x + it->width && missileIter->trans.x + missileIter->width >= it->trans.x && missileIter->trans.y <= it->trans.y + it->height && missileIter->trans.y + missileIter->height >= it->trans.y) {
+				it->lifespan = 0;
+				missileIter->lifespan = 0;
+				score++;
+			}
+			
+			/*
 			float hDistance = abs(it->trans.x - missileIter->trans.x);
 			float vDistance = abs(it->trans.y - missileIter->trans.y);
 			float hContactDistance = it->width / 2 + missileIter->width / 2;
@@ -86,6 +93,7 @@ void ofApp::checkCollisions() {
 				missileIter->lifespan = 0;
 				score++;
 			}
+			*/
 		}
 	}
 }
