@@ -1,4 +1,5 @@
 #include "ofApp.h"
+#include "stdlib.h"
 
 //--------------------------------------------------------------
 void ofApp::setup(){
@@ -25,18 +26,20 @@ void ofApp::setup(){
 	missileEmitterPosition.y = turretSprite.trans.y;
 	missileEmitter.setPosition(missileEmitterPosition);
 
-	Emitter* enemyEmitter = new Emitter();
-	enemyEmitter->sys = &enemySystem;
-	enemyEmitter->loadSpriteImage("images/enemy.png");
-	enemyEmitter->velocity = ofVec2f(0, 500);
-	enemyEmitter->lifespan = 3000;
-	enemyEmitter->direction = 180;
-	enemyEmitter->rate = 10.0;
-	ofVec2f* enemyEmitterPosition = new ofVec2f();
-	enemyEmitterPosition->x = ofGetWidth() / 2;
-	enemyEmitterPosition->y = 0;
-	enemyEmitter->setPosition(*enemyEmitterPosition);
-	enemyEmitters.push_back(*enemyEmitter);
+	for (int i = 0; i < 3; i++) {
+		Emitter* enemyEmitter = new Emitter();
+		enemyEmitter->sys = &enemySystem;
+		enemyEmitter->loadSpriteImage("images/enemy.png");
+		enemyEmitter->velocity = ofVec2f(0, 500);
+		enemyEmitter->lifespan = 3000;
+		enemyEmitter->direction = 180;
+		enemyEmitter->rate = 10.0;
+		ofVec2f* enemyEmitterPosition = new ofVec2f();
+		enemyEmitterPosition->x = ofGetWidth() * ((rand() % 100) / 100.0);
+		enemyEmitterPosition->y = 0;
+		enemyEmitter->setPosition(*enemyEmitterPosition);
+		enemyEmitters.push_back(*enemyEmitter);
+	}
 
 	panel.setup();
 	panel.add(rateSlider.setup("rate", 10, 0, 70));
