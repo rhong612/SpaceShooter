@@ -43,7 +43,7 @@ public:
 	Emitter();
 	void start();
 	void stop();
-	void emit(float, float);
+	void emit();
 	void rotate(ofVec2f*);
 	void loadEmitSound(string);
 	void loadSpriteImage(string);

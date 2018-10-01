@@ -20,6 +20,10 @@ void ofApp::setup(){
 	missileEmitter.loadSpriteImage("images/missile.png");
 	missileEmitter.velocity = ofVec2f(0, -500);
 	missileEmitter.lifespan = 3000;
+	ofVec2f missileEmitterPosition;
+	missileEmitterPosition.x = turretSprite.trans.x + turretSprite.width / 2;
+	missileEmitterPosition.y = turretSprite.trans.y;
+	missileEmitter.setPosition(missileEmitterPosition);
 
 	enemyEmitter.sys = &enemySystem;
 	enemyEmitter.loadSpriteImage("images/enemy.png");
@@ -27,6 +31,10 @@ void ofApp::setup(){
 	enemyEmitter.lifespan = 3000;
 	enemyEmitter.direction = 180;
 	enemyEmitter.rate = 10;
+	ofVec2f enemyEmitterPosition;
+	enemyEmitterPosition.x = ofGetWidth() / 2;
+	enemyEmitterPosition.y = 0;
+	enemyEmitter.setPosition(enemyEmitterPosition);
 
 	panel.setup();
 	panel.add(rateSlider.setup("rate", 10, 0, 70));
@@ -44,11 +52,15 @@ void ofApp::update(){
 	updateSprite();
 	checkTurretBounds();
 	missileSystem.update();
-	missileEmitter.emit(turretSprite.trans.x + turretSprite.width / 2, turretSprite.trans.y);
+	ofVec2f missileEmitterPosition;
+	missileEmitterPosition.x = turretSprite.trans.x + turretSprite.width / 2;
+	missileEmitterPosition.y = turretSprite.trans.y;
+	missileEmitter.setPosition(missileEmitterPosition);
+	missileEmitter.emit();
 
 
 	enemySystem.update();
-	enemyEmitter.emit(ofGetWidth() / 2, 0);
+	enemyEmitter.emit();
 
 	checkCollisions();
 }

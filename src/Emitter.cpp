@@ -22,13 +22,13 @@ void Emitter::loadSpriteImage(string path) {
 	sprite.image.loadImage(path);
 }
 
-void Emitter::emit(float x, float y) {
+void Emitter::emit() {
 	rateCounter++;
 	if (started && rateCounter >= rate) {
 		sprite.width = sprite.image.getWidth();
 		sprite.height = sprite.image.getHeight();
-		sprite.trans.x = x - sprite.width / 2;
-		sprite.trans.y = y;
+		sprite.trans.x = trans.x - sprite.width / 2;
+		sprite.trans.y = trans.y;
 		sprite.velocity = velocity;
 		rotate(&sprite.velocity);
 		sprite.birthtime = ofGetElapsedTimeMillis();
