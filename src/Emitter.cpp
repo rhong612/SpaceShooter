@@ -4,6 +4,7 @@
 
 Emitter::Emitter() {
 	started = false;
+	rateCounter = 0;
 }
 
 void Emitter::start() {

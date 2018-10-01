@@ -25,16 +25,18 @@ void ofApp::setup(){
 	missileEmitterPosition.y = turretSprite.trans.y;
 	missileEmitter.setPosition(missileEmitterPosition);
 
-	enemyEmitter.sys = &enemySystem;
-	enemyEmitter.loadSpriteImage("images/enemy.png");
-	enemyEmitter.velocity = ofVec2f(0, 500);
-	enemyEmitter.lifespan = 3000;
-	enemyEmitter.direction = 180;
-	enemyEmitter.rate = 10;
-	ofVec2f enemyEmitterPosition;
-	enemyEmitterPosition.x = ofGetWidth() / 2;
-	enemyEmitterPosition.y = 0;
-	enemyEmitter.setPosition(enemyEmitterPosition);
+	Emitter* enemyEmitter = new Emitter();
+	enemyEmitter->sys = &enemySystem;
+	enemyEmitter->loadSpriteImage("images/enemy.png");
+	enemyEmitter->velocity = ofVec2f(0, 500);
+	enemyEmitter->lifespan = 3000;
+	enemyEmitter->direction = 180;
+	enemyEmitter->rate = 10.0;
+	ofVec2f* enemyEmitterPosition = new ofVec2f();
+	enemyEmitterPosition->x = ofGetWidth() / 2;
+	enemyEmitterPosition->y = 0;
+	enemyEmitter->setPosition(*enemyEmitterPosition);
+	enemyEmitters.push_back(*enemyEmitter);
 
 	panel.setup();
 	panel.add(rateSlider.setup("rate", 10, 0, 70));
@@ -60,7 +62,9 @@ void ofApp::update(){
 
 
 	enemySystem.update();
-	enemyEmitter.emit();
+	for (auto it = begin(enemyEmitters); it != end(enemyEmitters); it++) {
+		it->emit();
+	}
 
 	checkCollisions();
 }
@@ -145,7 +149,9 @@ void ofApp::keyPressed(int key){
 		switch (key) {
 			case ' ':
 				missileEmitter.start();
-				enemyEmitter.start();
+				for (auto it = begin(enemyEmitters); it != end(enemyEmitters); it++) {
+					it->start();
+				}
 				break;
 			case OF_KEY_RIGHT:
 				rightPressed = true;

@@ -97,7 +97,7 @@ class ofApp : public ofBaseApp{
 		SpriteSystem missileSystem;
 		Emitter missileEmitter;
 
-		Emitter enemyEmitter;
+		vector<Emitter> enemyEmitters;
 		SpriteSystem enemySystem;
 
 		
