@@ -5,7 +5,7 @@
 void ofApp::setup(){
 	ofSetVerticalSync(true);
 	turretSprite.image.loadImage("images/sprite.png");
-	turretSprite.speed = 600;
+	turretSprite.speed = 500;
 	turretSprite.width = turretSprite.image.getWidth();
 	turretSprite.height = turretSprite.image.getHeight();
 	turretSprite.trans.x = ofGetWidth() / 2 - turretSprite.width / 2;
@@ -19,7 +19,7 @@ void ofApp::setup(){
 	
 	missileEmitter.sys = &missileSystem;
 	missileEmitter.loadSpriteImage("images/missile.png");
-	missileEmitter.velocity = ofVec2f(0, -500);
+	missileEmitter.velocity = ofVec2f(0, -600);
 	missileEmitter.lifespan = 3000;
 	ofVec2f missileEmitterPosition;
 	missileEmitterPosition.x = turretSprite.trans.x + turretSprite.width / 2;
@@ -30,12 +30,13 @@ void ofApp::setup(){
 		Emitter* enemyEmitter = new Emitter();
 		enemyEmitter->sys = &enemySystem;
 		enemyEmitter->loadSpriteImage("images/enemy.png");
-		enemyEmitter->velocity = ofVec2f(0, 500);
-		enemyEmitter->lifespan = 3000;
+		enemyEmitter->velocity = ofVec2f(0, 200);
+		enemyEmitter->lifespan = 7000;
 		enemyEmitter->direction = 180;
-		enemyEmitter->rate = 10.0;
+		enemyEmitter->rate = 40.0;
 		ofVec2f* enemyEmitterPosition = new ofVec2f();
-		enemyEmitterPosition->x = ofGetWidth() * ((rand() % 100) / 100.0);
+		//enemyEmitterPosition->x = ofGetWidth() * ((rand() % 100) / 100.0); //Random location.
+		enemyEmitterPosition->x = ofGetWidth() / (i + 2); //Fixed location. For testing purposes.
 		enemyEmitterPosition->y = 0;
 		enemyEmitter->setPosition(*enemyEmitterPosition);
 		enemyEmitters.push_back(*enemyEmitter);
@@ -65,13 +66,22 @@ void ofApp::update(){
 	missileEmitter.setPosition(missileEmitterPosition);
 	missileEmitter.emit();
 
-
+	curveVelocity(&enemySystem, 100);
 	enemySystem.update();
 	for (auto it = begin(enemyEmitters); it != end(enemyEmitters); it++) {
 		it->emit();
 	}
 
 	checkCollisions();
+}
+
+void ofApp::curveVelocity(SpriteSystem *sys, float curveIntensity) {
+	ofVec2f newEnemyVelocity;
+	for (auto it = begin(enemySystem.sprites); it != end(enemySystem.sprites); it++) {
+		newEnemyVelocity.x = -cos(it->trans.y / 100) * curveIntensity;
+		newEnemyVelocity.y = it->velocity.y;
+		it->velocity = newEnemyVelocity;
+	}
 }
 
 void ofApp::checkCollisions() {

@@ -83,6 +83,7 @@ class ofApp : public ofBaseApp{
 		void stopSprite();
 		void checkTurretBounds();
 		void checkCollisions();
+		void curveVelocity(SpriteSystem*, float);
 
 		int score;
 
