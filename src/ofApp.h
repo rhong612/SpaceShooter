@@ -91,10 +91,11 @@ class ofApp : public ofBaseApp{
 		bool downPressed;
 		ofVec3f mouseLast;
 
-		Sprite sprite;
+		Sprite turretSprite;
+		MoveDir moveDir;
+
 		SpriteSystem missileSystem;
 		Emitter missileEmitter;
-		MoveDir moveDir;
 
 		Emitter enemyEmitter;
 		SpriteSystem enemySystem;
@@ -103,5 +104,4 @@ class ofApp : public ofBaseApp{
 		ofxFloatSlider rateSlider;
 		ofxFloatSlider directionSlider;
 		ofxPanel panel;
-		
 };

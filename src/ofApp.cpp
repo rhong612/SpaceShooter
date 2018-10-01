@@ -3,12 +3,12 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 	ofSetVerticalSync(true);
-	sprite.image.loadImage("images/sprite.png");
-	sprite.speed = 600;
-	sprite.width = sprite.image.getWidth();
-	sprite.height = sprite.image.getHeight();
-	sprite.trans.x = ofGetWidth() / 2 - sprite.width / 2;
-	sprite.trans.y = ofGetHeight() / 2 - sprite.height / 2;
+	turretSprite.image.loadImage("images/sprite.png");
+	turretSprite.speed = 600;
+	turretSprite.width = turretSprite.image.getWidth();
+	turretSprite.height = turretSprite.image.getHeight();
+	turretSprite.trans.x = ofGetWidth() / 2 - turretSprite.width / 2;
+	turretSprite.trans.y = ofGetHeight() / 2 - turretSprite.height / 2;
 	moveDir = MoveStop;
 	idle = true;
 	leftPressed = false;
@@ -44,7 +44,7 @@ void ofApp::update(){
 	updateSprite();
 	checkTurretBounds();
 	missileSystem.update();
-	missileEmitter.emit(sprite.trans.x + sprite.width / 2, sprite.trans.y);
+	missileEmitter.emit(turretSprite.trans.x + turretSprite.width / 2, turretSprite.trans.y);
 
 
 	enemySystem.update();
@@ -69,7 +69,7 @@ void ofApp::checkCollisions() {
 }
 
 void ofApp::updateSprite() {
-	float dist = sprite.speed * 1 / ofGetFrameRate();
+	float dist = turretSprite.speed * 1 / ofGetFrameRate();
 	ofVec3f dir;
 
 	switch (moveDir)
@@ -88,7 +88,7 @@ void ofApp::updateSprite() {
 			break;
 	}
 
-	sprite.trans += dir;
+	turretSprite.trans += dir;
 }
 
 void ofApp::moveSprite(MoveDir dir) {
@@ -106,24 +106,24 @@ void ofApp::draw(){
 	}
 	else {
 		panel.draw();
-		sprite.draw();
+		turretSprite.draw();
 		missileSystem.draw();
 		enemySystem.draw();
 	}
 }
 
 void ofApp::checkTurretBounds() {
-	if (sprite.trans.x < 0) {
-		sprite.trans.x = 0;
+	if (turretSprite.trans.x < 0) {
+		turretSprite.trans.x = 0;
 	}
-	else if (sprite.trans.x > ofGetWidth() - sprite.image.getWidth()) {
-		sprite.trans.x = ofGetWidth() - sprite.image.getWidth();
+	else if (turretSprite.trans.x > ofGetWidth() - turretSprite.image.getWidth()) {
+		turretSprite.trans.x = ofGetWidth() - turretSprite.image.getWidth();
 	}
-	if (sprite.trans.y < 0) {
-		sprite.trans.y = 0;
+	if (turretSprite.trans.y < 0) {
+		turretSprite.trans.y = 0;
 	}
-	else if (sprite.trans.y > ofGetHeight() - sprite.image.getHeight()) {
-		sprite.trans.y = ofGetHeight() - sprite.image.getHeight();
+	else if (turretSprite.trans.y > ofGetHeight() - turretSprite.image.getHeight()) {
+		turretSprite.trans.y = ofGetHeight() - turretSprite.image.getHeight();
 	}
 }
 
@@ -201,7 +201,7 @@ void ofApp::mouseDragged(int x, int y, int button){
 	if (!idle) {
 		ofPoint mouseCurrent = ofPoint(x, y);
 		ofVec3f delta = mouseCurrent - mouseLast;
-		sprite.trans += delta;
+		turretSprite.trans += delta;
 		mouseLast = mouseCurrent;
 	}
 }
