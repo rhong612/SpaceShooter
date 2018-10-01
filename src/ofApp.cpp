@@ -48,6 +48,8 @@ void ofApp::setup(){
 	missileEmitter.rate = rateSlider;
 
 	missileEmitter.loadEmitSound("sfx/laser.wav");
+
+	score = 0;
 }
 
 //--------------------------------------------------------------
@@ -82,6 +84,7 @@ void ofApp::checkCollisions() {
 			if (hDistance < hContactDistance && vDistance < vContactDistance) {
 				it->lifespan = 0;
 				missileIter->lifespan = 0;
+				score++;
 			}
 		}
 	}
@@ -127,7 +130,8 @@ void ofApp::draw(){
 		panel.draw();
 		turretSprite.draw();
 		missileSystem.draw();
-		enemySystem.draw();
+		enemySystem.draw(); 
+		ofDrawBitmapString(score, ofGetWidth() / 2, ofGetHeight() / 10);
 	}
 }
 

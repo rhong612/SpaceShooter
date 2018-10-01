@@ -84,6 +84,8 @@ class ofApp : public ofBaseApp{
 		void checkTurretBounds();
 		void checkCollisions();
 
+		int score;
+
 		bool idle;
 		bool leftPressed;
 		bool rightPressed;
