@@ -47,7 +47,7 @@ void ofApp::setup(){
 		enemyEmitter->direction = 180;
 		enemyEmitter->rate = enemyRateSlider;
 		ofVec2f* enemyEmitterPosition = new ofVec2f();
-		enemyEmitterPosition->x = ofGetWidth() / (i + 2); //Fixed locations for testing purposes (temporary until part 3)
+		enemyEmitterPosition->x = (i + 1) * 300; //Fixed locations for testing purposes (temporary until part 3)
 		enemyEmitterPosition->y = 0;
 		enemyEmitter->setPosition(*enemyEmitterPosition);
 		enemyEmitters.push_back(*enemyEmitter);
