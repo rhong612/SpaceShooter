@@ -47,6 +47,7 @@ public:
 	void rotate(ofVec2f*);
 	void loadEmitSound(string);
 	void loadSpriteImage(string);
+	void resizeImage(float, float);
 	SpriteSystem *sys;
 	float rate;
 	int rateCounter;
@@ -113,4 +114,6 @@ class ofApp : public ofBaseApp{
 		ofxFloatSlider enemyLifespanSlider;
 
 		ofxPanel panel;
+
+		ofTrueTypeFont arialFont;
 };

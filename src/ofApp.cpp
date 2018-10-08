@@ -4,6 +4,8 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 	ofSetVerticalSync(true);
+
+	arialFont.load("fonts/arial.ttf", 32);
 	turretSprite.image.loadImage("images/sprite.png");
 	turretSprite.speed = 500;
 	turretSprite.width = turretSprite.image.getWidth();
@@ -19,6 +21,7 @@ void ofApp::setup(){
 	
 	missileEmitter.sys = &missileSystem;
 	missileEmitter.loadSpriteImage("images/missile.png");
+	missileEmitter.resizeImage(15, 15);
 	missileEmitter.velocity = ofVec2f(0, -600);
 	missileEmitter.lifespan = 3000;
 	ofVec2f missileEmitterPosition;
@@ -42,6 +45,7 @@ void ofApp::setup(){
 		Emitter* enemyEmitter = new Emitter();
 		enemyEmitter->sys = &enemySystem;
 		enemyEmitter->loadSpriteImage("images/enemy.png");
+		enemyEmitter->resizeImage(80, 80);
 		enemyEmitter->velocity = toGlm(enemyVelocitySlider);
 		enemyEmitter->lifespan = enemyLifespanSlider;
 		enemyEmitter->direction = 180;
@@ -142,14 +146,14 @@ void ofApp::stopSprite() {
 //--------------------------------------------------------------
 void ofApp::draw(){
 	if (idle) {
-		ofDrawBitmapString("Press spacebar to start!", ofGetWidth() / 2, ofGetHeight() / 2);
+		arialFont.drawString("Press spacebar to start!", ofGetWidth() / 2 - 200, ofGetHeight() / 2);
 	}
 	else {
 		panel.draw();
 		turretSprite.draw();
 		missileSystem.draw();
-		enemySystem.draw(); 
-		ofDrawBitmapString(score, ofGetWidth() / 2, ofGetHeight() / 10);
+		enemySystem.draw();
+		arialFont.drawString(to_string(score), ofGetWidth() / 2, ofGetHeight() / 10);
 	}
 }
 

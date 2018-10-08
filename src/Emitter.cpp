@@ -23,6 +23,10 @@ void Emitter::loadSpriteImage(string path) {
 	sprite.image.loadImage(path);
 }
 
+void Emitter::resizeImage(float width, float height) {
+	sprite.image.resize(width, height);
+}
+
 void Emitter::emit() {
 	rateCounter++;
 	if (started && rateCounter >= MAX_RATE - rate) {
