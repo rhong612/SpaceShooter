@@ -26,29 +26,33 @@ void ofApp::setup(){
 	missileEmitterPosition.y = turretSprite.trans.y;
 	missileEmitter.setPosition(missileEmitterPosition);
 
+	panel.setup();
+	panel.add(rateSlider.setup("rate", 10, 0, 70));
+	panel.add(directionSlider.setup("direction", 180, 0, 360));
+	panel.add(enemyRateSlider.setup("enemy rate", 40, 0, 70));
+	panel.add(enemyLifespanSlider.setup("enemy lifespan", 7000, 0, 10000));
+	panel.add(enemyVelocitySlider.setup("enemy velocity", ofVec3f(0, 200, 0), ofVec3f(0, 0, 0), ofVec3f(0, 2000, 0)));
+	missileEmitter.direction = directionSlider;
+	missileEmitter.rate = rateSlider;
+
+	missileEmitter.loadEmitSound("sfx/laser.wav");
+
+
 	for (int i = 0; i < 3; i++) {
 		Emitter* enemyEmitter = new Emitter();
 		enemyEmitter->sys = &enemySystem;
 		enemyEmitter->loadSpriteImage("images/enemy.png");
-		enemyEmitter->velocity = ofVec2f(0, 200);
-		enemyEmitter->lifespan = 7000;
+		enemyEmitter->velocity = toGlm(enemyVelocitySlider);
+		enemyEmitter->lifespan = enemyLifespanSlider;
 		enemyEmitter->direction = 180;
-		enemyEmitter->rate = 40.0;
+		enemyEmitter->rate = enemyRateSlider;
 		ofVec2f* enemyEmitterPosition = new ofVec2f();
-		//enemyEmitterPosition->x = ofGetWidth() * ((rand() % 100) / 100.0); //Random location.
-		enemyEmitterPosition->x = ofGetWidth() / (i + 2); //Fixed location. For testing purposes.
+		enemyEmitterPosition->x = ofGetWidth() / (i + 2); //Fixed location for now.
 		enemyEmitterPosition->y = 0;
 		enemyEmitter->setPosition(*enemyEmitterPosition);
 		enemyEmitters.push_back(*enemyEmitter);
 	}
 
-	panel.setup();
-	panel.add(rateSlider.setup("rate", 10, 0, 70));
-	panel.add(directionSlider.setup("direction", 180, 0, 360));
-	missileEmitter.direction = directionSlider;
-	missileEmitter.rate = rateSlider;
-
-	missileEmitter.loadEmitSound("sfx/laser.wav");
 
 	score = 0;
 }
@@ -69,6 +73,9 @@ void ofApp::update(){
 	curveVelocity(&enemySystem, 100);
 	enemySystem.update();
 	for (auto it = begin(enemyEmitters); it != end(enemyEmitters); it++) {
+		it->rate = enemyRateSlider;
+		it->velocity = toGlm(enemyVelocitySlider);
+		it->lifespan = enemyLifespanSlider;
 		it->emit();
 	}
 

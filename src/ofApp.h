@@ -106,5 +106,10 @@ class ofApp : public ofBaseApp{
 		
 		ofxFloatSlider rateSlider;
 		ofxFloatSlider directionSlider;
+
+		ofxFloatSlider enemyRateSlider;
+		ofxVec3Slider enemyVelocitySlider;
+		ofxFloatSlider enemyLifespanSlider;
+
 		ofxPanel panel;
 };
