@@ -27,9 +27,9 @@ void ofApp::setup(){
 	missileEmitter.setPosition(missileEmitterPosition);
 
 	panel.setup();
-	panel.add(rateSlider.setup("rate", 10, 0, 70));
+	panel.add(rateSlider.setup("rate", 80, 0, 100));
 	panel.add(directionSlider.setup("direction", 180, 0, 360));
-	panel.add(enemyRateSlider.setup("enemy rate", 40, 0, 70));
+	panel.add(enemyRateSlider.setup("enemy rate", 40, 0, 100));
 	panel.add(enemyLifespanSlider.setup("enemy lifespan", 7000, 0, 10000));
 	panel.add(enemyVelocitySlider.setup("enemy velocity", ofVec3f(0, 200, 0), ofVec3f(0, 0, 0), ofVec3f(0, 2000, 0)));
 	missileEmitter.direction = directionSlider;
@@ -47,7 +47,7 @@ void ofApp::setup(){
 		enemyEmitter->direction = 180;
 		enemyEmitter->rate = enemyRateSlider;
 		ofVec2f* enemyEmitterPosition = new ofVec2f();
-		enemyEmitterPosition->x = ofGetWidth() / (i + 2); //Fixed location for now.
+		enemyEmitterPosition->x = ofGetWidth() / (i + 2); //Fixed locations for testing purposes (temporary until part 3)
 		enemyEmitterPosition->y = 0;
 		enemyEmitter->setPosition(*enemyEmitterPosition);
 		enemyEmitters.push_back(*enemyEmitter);

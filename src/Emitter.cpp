@@ -25,7 +25,7 @@ void Emitter::loadSpriteImage(string path) {
 
 void Emitter::emit() {
 	rateCounter++;
-	if (started && rateCounter >= rate) {
+	if (started && rateCounter >= MAX_RATE - rate) {
 		sprite.width = sprite.image.getWidth();
 		sprite.height = sprite.image.getHeight();
 		sprite.trans.x = trans.x - sprite.width / 2;

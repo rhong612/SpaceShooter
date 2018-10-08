@@ -49,13 +49,14 @@ public:
 	void loadSpriteImage(string);
 	SpriteSystem *sys;
 	float rate;
-	float rateCounter;
+	int rateCounter;
 	ofVec2f velocity;
 	float lifespan;
 	bool started;
 	float direction;
 	ofSoundPlayer soundPlayer;
 	Sprite sprite;
+	static const int MAX_RATE = 100;
 };
 
 
