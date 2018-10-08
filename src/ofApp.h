@@ -57,7 +57,7 @@ public:
 	float direction;
 	ofSoundPlayer soundPlayer;
 	Sprite sprite;
-	static const int MAX_RATE = 100;
+	static const int MAX_RATE = 60;
 };
 
 

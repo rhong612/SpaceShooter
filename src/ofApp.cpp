@@ -30,9 +30,9 @@ void ofApp::setup(){
 	missileEmitter.setPosition(missileEmitterPosition);
 
 	panel.setup();
-	panel.add(rateSlider.setup("rate", 80, 0, 100));
+	panel.add(rateSlider.setup("rate", 40, 0, 60));
 	panel.add(directionSlider.setup("direction", 180, 0, 360));
-	panel.add(enemyRateSlider.setup("enemy rate", 40, 0, 100));
+	panel.add(enemyRateSlider.setup("enemy rate", 20, 0, 60));
 	panel.add(enemyLifespanSlider.setup("enemy lifespan", 7000, 0, 10000));
 	panel.add(enemyVelocitySlider.setup("enemy velocity", ofVec3f(0, 200, 0), ofVec3f(0, 0, 0), ofVec3f(0, 2000, 0)));
 	missileEmitter.direction = directionSlider;
