@@ -43,7 +43,6 @@ void ParticleEmitter::init() {
 }
 
 
-
 void ParticleEmitter::draw() {
 	if (visible) {
 		switch (type) {

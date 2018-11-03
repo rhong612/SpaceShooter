@@ -2,6 +2,8 @@
 
 #include "ofMain.h"
 #include "ofxGui.h"
+#include "Particle.h"
+#include "ParticleEmitter.h"
 
 
 typedef enum {MoveStop, MoveLeft, MoveRight, MoveUp, MoveDown } MoveDir;
@@ -114,6 +116,8 @@ class ofApp : public ofBaseApp{
 		Emitter* zombieEmitter;
 		SpriteSystem alienEnemySystem;
 		SpriteSystem zombieEnemySystem;
+
+		ParticleEmitter particleEmitter;
 
 		
 		ofxFloatSlider rateSlider;

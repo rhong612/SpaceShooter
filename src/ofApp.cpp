@@ -89,6 +89,13 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
+	particleEmitter.setRate(10);
+	particleEmitter.setLifespan(10000);
+	particleEmitter.setParticleRadius(50.0);
+	particleEmitter.setVelocity(ofVec3f(0, 0, 0));
+	particleEmitter.update();
+
+
 	missileEmitter.rate = rateSlider;
 	missileEmitter.direction = directionSlider;
 	updateSprite();
@@ -231,6 +238,8 @@ void ofApp::draw(){
 	}
 	else {
 		panel.draw();
+		particleEmitter.draw();
+		ofSetColor(255, 255, 255); //When a particle is drawn, it calls ofSetColor(red);
 		turretSprite.draw();
 		missileSystem.draw();
 		alienEnemySystem.draw();
@@ -263,6 +272,7 @@ void ofApp::keyPressed(int key){
 			case ' ':
 				missileEmitter.start();
 				alienEmitter->start();
+				particleEmitter.start();
 				break;
 			case OF_KEY_RIGHT:
 				rightPressed = true;
