@@ -40,22 +40,24 @@ void ofApp::setup(){
 
 	missileEmitter.loadEmitSound("sfx/laser.wav");
 
+	//Setup Alien Emitter
+	Emitter* alienEmitter = new Emitter();
+	alienEmitter->sys = &alienEnemySystem;
+	alienEmitter->loadSpriteImage("images/enemy.png");
+	alienEmitter->resizeImage(60, 60);
+	alienEmitter->velocity = toGlm(enemyVelocitySlider);
+	alienEmitter->lifespan = enemyLifespanSlider;
+	alienEmitter->direction = 180;
+	alienEmitter->rate = enemyRateSlider;
+	ofVec2f* enemyEmitterPosition = new ofVec2f();
+	enemyEmitterPosition->x = rand() % (ofGetWidth() - 60) + 60;
+	enemyEmitterPosition->y = 0;
+	alienEmitter->setPosition(*enemyEmitterPosition);
 
-	for (int i = 0; i < 3; i++) {
-		Emitter* enemyEmitter = new Emitter();
-		enemyEmitter->sys = &enemySystem;
-		enemyEmitter->loadSpriteImage("images/enemy.png");
-		enemyEmitter->resizeImage(80, 80);
-		enemyEmitter->velocity = toGlm(enemyVelocitySlider);
-		enemyEmitter->lifespan = enemyLifespanSlider;
-		enemyEmitter->direction = 180;
-		enemyEmitter->rate = enemyRateSlider;
-		ofVec2f* enemyEmitterPosition = new ofVec2f();
-		enemyEmitterPosition->x = (i + 1) * 300; //Fixed locations for testing purposes (temporary until part 3)
-		enemyEmitterPosition->y = 0;
-		enemyEmitter->setPosition(*enemyEmitterPosition);
-		enemyEmitters.push_back(*enemyEmitter);
-	}
+
+
+
+	enemyEmitters.push_back(*alienEmitter);
 
 
 	score = 0;
@@ -74,8 +76,8 @@ void ofApp::update(){
 	missileEmitter.setPosition(missileEmitterPosition);
 	missileEmitter.emit();
 
-	curveVelocity(&enemySystem, 100);
-	enemySystem.update();
+	curveVelocity(&alienEnemySystem, 150);
+	alienEnemySystem.update();
 	for (auto it = begin(enemyEmitters); it != end(enemyEmitters); it++) {
 		it->rate = enemyRateSlider;
 		it->velocity = toGlm(enemyVelocitySlider);
@@ -88,7 +90,7 @@ void ofApp::update(){
 
 void ofApp::curveVelocity(SpriteSystem *sys, float curveIntensity) {
 	ofVec2f newEnemyVelocity;
-	for (auto it = begin(enemySystem.sprites); it != end(enemySystem.sprites); it++) {
+	for (auto it = begin(alienEnemySystem.sprites); it != end(alienEnemySystem.sprites); it++) {
 		newEnemyVelocity.x = -cos(it->trans.y / 100) * curveIntensity;
 		newEnemyVelocity.y = it->velocity.y;
 		it->velocity = newEnemyVelocity;
@@ -96,15 +98,14 @@ void ofApp::curveVelocity(SpriteSystem *sys, float curveIntensity) {
 }
 
 void ofApp::checkCollisions() {
-	for (vector<Sprite>::iterator it = enemySystem.sprites.begin(); it != enemySystem.sprites.end(); it++) {
+	for (vector<Sprite>::iterator it = alienEnemySystem.sprites.begin(); it != alienEnemySystem.sprites.end(); it++) {
 		for (vector<Sprite>::iterator missileIter = missileSystem.sprites.begin(); missileIter != missileSystem.sprites.end(); missileIter++) {			
 			float hDistance = abs( (it->trans.x + it->width / 2) - (missileIter->trans.x + missileIter->width / 2) );
 			float vDistance = abs( (it->trans.y + it->height / 2) - (missileIter->trans.y + missileIter->height / 2) );
 			float hContactDistance = it->width / 2 + missileIter->width / 2;
 			float vContactDistance = it->height / 2 + missileIter->height / 2;
 			if (hDistance <= hContactDistance && vDistance <= vContactDistance) {
-				it->lifespan = 0;
-				missileIter->lifespan = 0;
+				missileIter->attack(&*it);
 				score++;
 			}
 			
@@ -152,7 +153,7 @@ void ofApp::draw(){
 		panel.draw();
 		turretSprite.draw();
 		missileSystem.draw();
-		enemySystem.draw();
+		alienEnemySystem.draw();
 		arialFont.drawString(to_string(score), ofGetWidth() / 2, ofGetHeight() / 10);
 	}
 }

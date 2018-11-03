@@ -19,6 +19,7 @@ public:
 	Sprite();
 	void draw();
 	float age();
+	void attack(Sprite*);
 	float speed; // in pixels/sec
 	ofVec2f velocity; // in pixels/sec
 	ofImage image;
@@ -27,6 +28,8 @@ public:
 	string name;
 	bool haveImage;
 	float width, height;
+	float health;
+	float damage;
 };
 
 class SpriteSystem {
@@ -103,7 +106,7 @@ class ofApp : public ofBaseApp{
 		Emitter missileEmitter;
 
 		vector<Emitter> enemyEmitters;
-		SpriteSystem enemySystem;
+		SpriteSystem alienEnemySystem;
 
 		
 		ofxFloatSlider rateSlider;
