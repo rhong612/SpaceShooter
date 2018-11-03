@@ -54,10 +54,7 @@ void ofApp::setup(){
 	alienEmitter->lifespan = 12000;
 	alienEmitter->direction = 180;
 	alienEmitter->rate = 800;
-	ofVec2f* enemyEmitterPosition = new ofVec2f();
-	enemyEmitterPosition->x = rand() % ofGetWidth();
-	enemyEmitterPosition->y = 0;
-	alienEmitter->setPosition(*enemyEmitterPosition);
+	alienEmitter->setPosition(ofVec2f(rand() % ofGetWidth(), 0));
 	alienEmitter->sprite.damage = 10;
 	alienEmitter->sprite.health = 10;
 
@@ -70,22 +67,33 @@ void ofApp::setup(){
 	zombieEmitter->lifespan = 20000;
 	zombieEmitter->direction = 180;
 	zombieEmitter->rate = 700;
-	ofVec2f* enemyEmitterPosition2 = new ofVec2f();
-	enemyEmitterPosition2->x = rand() % ofGetWidth();
-	enemyEmitterPosition2->y = 0;
-	zombieEmitter->setPosition(*enemyEmitterPosition2);
+	alienEmitter->setPosition(ofVec2f(rand() % ofGetWidth(), 0));
 	zombieEmitter->sprite.damage = 20;
 	zombieEmitter->sprite.health = 20;
 
+	//Setup Blue Zombie Emitter;
+	blueZombieEmitter = new Emitter();
+	blueZombieEmitter->sys = &blueZombieEnemySystem;
+	blueZombieEmitter->loadSpriteImage("images/random_zombie_thing.png");
+	blueZombieEmitter->resizeImage(50, 50);
+	blueZombieEmitter->velocity = ofVec3f(0, INITIAL_BLUE_ZOMBIE_Y_VELOCITY, 0);
+	blueZombieEmitter->lifespan = 50000;
+	blueZombieEmitter->direction = 180;
+	blueZombieEmitter->rate = 600;
+	alienEmitter->setPosition(ofVec2f(rand() % ofGetWidth(), 0));
+	blueZombieEmitter->sprite.damage = 30;
+	blueZombieEmitter->sprite.health = 30;
 
 
 	enemyEmitters.push_back(alienEmitter);
 	enemyEmitters.push_back(zombieEmitter);
+	enemyEmitters.push_back(blueZombieEmitter);
 
 
 	score = 0;
 	level = 1;
 	currentAlienCurveIntensity = INITIAL_ALIEN_CURVE_INTENSITY;
+	lastRotated = ofGetElapsedTimeMillis();
 }
 
 //--------------------------------------------------------------
@@ -106,8 +114,10 @@ void ofApp::update(){
 	missileEmitter.emit();
 
 	curveVelocity(&alienEnemySystem, currentAlienCurveIntensity);
+	randomizeMovement(&blueZombieEnemySystem);
 	alienEnemySystem.update();
 	zombieEnemySystem.update();
+	blueZombieEnemySystem.update();
 	for (auto it = begin(enemyEmitters); it != end(enemyEmitters); it++) {
 		/*
 		(*it)->rate = enemyRateSlider;
@@ -123,12 +133,31 @@ void ofApp::update(){
 	scaleEnemies();
 }
 
+void ofApp::randomizeMovement(SpriteSystem* sys) {
+	//Randomize every 2 seconds
+	if (ofGetElapsedTimeMillis() - lastRotated >= 2000) {
+		for (auto it = begin(sys->sprites); it != end(sys->sprites); it++) {
+			float radDirection = (rand() % 360) * PI / 180.0; //Convert to radians
+			float oldX = it->velocity.x;
+			float oldY = it->velocity.y;
+			float newX = oldX * cos(radDirection) - oldY * sin(radDirection);
+			float newY = oldX * sin(radDirection) - oldY * cos(radDirection);
+			if (newY <= 0) {
+				newY *= -1.0; //Make sure the sprite is moving vertically downwards at all times.
+			}
+			it->velocity = ofVec2f(newX, newY);
+		}
+		lastRotated = ofGetElapsedTimeMillis();
+	}
+}
+
 void ofApp::checkLevel() {
 	if (level == 3) {
 		level = score / 30 + 3; //Increase level every 30 points after level 3
 	}
 	else if (level == 2 && score >= LEVEL_THREE_REQUIREMENT) {
 		level = 3;
+		blueZombieEmitter->start();
 	}
 	else if (level == 1 && score >= LEVEL_TWO_REQUIREMENT) {
 		level = 2;
@@ -139,14 +168,16 @@ void ofApp::checkLevel() {
 void ofApp::scaleEnemies() {
 	alienEmitter->rate = level * 10 + 800;
 	zombieEmitter->rate = level * 5 + 700;
+	blueZombieEmitter->rate = level * 5 + 600;
 
 	currentAlienCurveIntensity = level * INITIAL_ALIEN_CURVE_INTENSITY;
 	zombieEmitter->velocity = ofVec3f(0, level * 5.0 + INITIAL_ZOMBIE_Y_VELOCITY, 0);
+	blueZombieEmitter->velocity = ofVec3f(0, level * 5.0 + INITIAL_BLUE_ZOMBIE_Y_VELOCITY, 0);
 }
 
 void ofApp::curveVelocity(SpriteSystem *sys, float curveIntensity) {
 	ofVec2f newEnemyVelocity;
-	for (auto it = begin(alienEnemySystem.sprites); it != end(alienEnemySystem.sprites); it++) {
+	for (auto it = begin(sys->sprites); it != end(sys->sprites); it++) {
 		newEnemyVelocity.x = -cos(it->trans.y / 100) * curveIntensity;
 		newEnemyVelocity.y = it->velocity.y;
 		it->velocity = newEnemyVelocity;
@@ -215,6 +246,41 @@ void ofApp::checkCollisions() {
 		}
 	}
 
+	//Blue Zombie Collisions
+	for (vector<Sprite>::iterator it = blueZombieEnemySystem.sprites.begin(); it != blueZombieEnemySystem.sprites.end(); it++) {
+		//Contact with player missile
+		for (vector<Sprite>::iterator missileIter = missileSystem.sprites.begin(); missileIter != missileSystem.sprites.end(); missileIter++) {
+			float hDistance = abs((it->trans.x + it->width / 2) - (missileIter->trans.x + missileIter->width / 2));
+			float vDistance = abs((it->trans.y + it->height / 2) - (missileIter->trans.y + missileIter->height / 2));
+			float hContactDistance = it->width / 2 + missileIter->width / 2;
+			float vContactDistance = it->height / 2 + missileIter->height / 2;
+			if (hDistance <= hContactDistance && vDistance <= vContactDistance) {
+				bool zombieDied = collide(&*it, &*missileIter);
+				if (zombieDied) {
+					score += 10;
+					//Create explosion effect
+					ParticleEmitter* particleEmitter = new ParticleEmitter();
+					particleEmitter->setLifespan(3);
+					particleEmitter->setParticleRadius(7.0);
+					particleEmitter->setVelocity(ofVec3f(0, 0, 0));
+					particleEmitter->sys->addForce(new ImpulseRadialForce(40000.0));
+					particleEmitter->position = it->trans;
+					particleEmitter->groupSize = 30;
+					particleEmitter->oneShot = true;
+					particleEmitter->start();
+					particleEmitters.push_back(particleEmitter);
+				}
+			}
+		}
+		//Contact with turret
+		float hDistance = abs((it->trans.x + it->width / 2) - (turretSprite.trans.x + turretSprite.width / 2));
+		float vDistance = abs((it->trans.y + it->height / 2) - (turretSprite.trans.y + turretSprite.height / 2));
+		float hContactDistance = it->width / 2 + turretSprite.width / 2;
+		float vContactDistance = it->height / 2 + turretSprite.height / 2;
+		if (hDistance <= hContactDistance && vDistance <= vContactDistance) {
+			collide(&turretSprite, &*it);
+		}
+	}
 
 	for (auto it = begin(particleEmitters); it != end(particleEmitters); it++) {
 		for (auto part = begin((*it)->sys->particles); part != end((*it)->sys->particles); part++) {
@@ -300,6 +366,7 @@ void ofApp::draw(){
 		missileSystem.draw();
 		alienEnemySystem.draw();
 		zombieEnemySystem.draw();
+		blueZombieEnemySystem.draw();
 		for (auto it = begin(particleEmitters); it != end(particleEmitters); it++) {
 			(*it)->draw();
 		}

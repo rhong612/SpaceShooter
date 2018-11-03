@@ -91,6 +91,7 @@ class ofApp : public ofBaseApp{
 		void checkCollisions();
 		void checkLevel();
 		void scaleEnemies();
+		void randomizeMovement(SpriteSystem*);
 		void curveVelocity(SpriteSystem*, float);
 		bool collide(Sprite*, Sprite*);
 		bool collide(Sprite*, Particle*);
@@ -98,11 +99,13 @@ class ofApp : public ofBaseApp{
 		int score;
 		int level;
 		float currentAlienCurveIntensity;
+		float lastRotated;
 		static const int LEVEL_TWO_REQUIREMENT = 5;
 		static const int LEVEL_THREE_REQUIREMENT = 10;
 
 		static const int INITIAL_ALIEN_CURVE_INTENSITY = 70;
-		static const int INITIAL_ZOMBIE_Y_VELOCITY = 50;
+		static const int INITIAL_ZOMBIE_Y_VELOCITY = 50; 
+		static const int INITIAL_BLUE_ZOMBIE_Y_VELOCITY = 150;
 
 		bool idle;
 		bool leftPressed;
@@ -120,8 +123,10 @@ class ofApp : public ofBaseApp{
 		vector<Emitter*> enemyEmitters;
 		Emitter* alienEmitter;
 		Emitter* zombieEmitter;
+		Emitter* blueZombieEmitter;
 		SpriteSystem alienEnemySystem;
 		SpriteSystem zombieEnemySystem;
+		SpriteSystem blueZombieEnemySystem;
 
 		vector<ParticleEmitter*> particleEmitters;
 
