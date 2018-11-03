@@ -50,7 +50,7 @@ void ofApp::setup(){
 	alienEmitter->sys = &alienEnemySystem;
 	alienEmitter->loadSpriteImage("images/alien.png");
 	alienEmitter->resizeImage(60, 60);
-	alienEmitter->velocity = ofVec3f(0, 100, 0);
+	alienEmitter->velocity = ofVec3f(0, 150, 0);
 	alienEmitter->lifespan = 12000;
 	alienEmitter->direction = 180;
 	alienEmitter->rate = 800;
@@ -66,7 +66,7 @@ void ofApp::setup(){
 	zombieEmitter->sys = &zombieEnemySystem;
 	zombieEmitter->loadSpriteImage("images/exploding_zombie_thing.png");
 	zombieEmitter->resizeImage(50, 50);
-	zombieEmitter->velocity = ofVec3f(0, 50, 0);
+	zombieEmitter->velocity = ofVec3f(0, INITIAL_ZOMBIE_Y_VELOCITY, 0);
 	zombieEmitter->lifespan = 20000;
 	zombieEmitter->direction = 180;
 	zombieEmitter->rate = 700;
@@ -79,13 +79,13 @@ void ofApp::setup(){
 
 
 
-
 	enemyEmitters.push_back(alienEmitter);
 	enemyEmitters.push_back(zombieEmitter);
 
 
 	score = 0;
 	level = 1;
+	currentAlienCurveIntensity = INITIAL_ALIEN_CURVE_INTENSITY;
 }
 
 //--------------------------------------------------------------
@@ -105,7 +105,7 @@ void ofApp::update(){
 	missileEmitter.setPosition(missileEmitterPosition);
 	missileEmitter.emit();
 
-	curveVelocity(&alienEnemySystem, 150);
+	curveVelocity(&alienEnemySystem, currentAlienCurveIntensity);
 	alienEnemySystem.update();
 	zombieEnemySystem.update();
 	for (auto it = begin(enemyEmitters); it != end(enemyEmitters); it++) {
@@ -140,8 +140,11 @@ void ofApp::checkLevel() {
 }
 
 void ofApp::scaleEnemies() {
-	alienEmitter->rate = level * 5 + 800;
-	zombieEmitter->rate = level * 2 + 700;
+	alienEmitter->rate = level * 10 + 800;
+	zombieEmitter->rate = level * 5 + 700;
+
+	currentAlienCurveIntensity = level * INITIAL_ALIEN_CURVE_INTENSITY;
+	zombieEmitter->velocity = ofVec3f(0, level * 5.0 + INITIAL_ZOMBIE_Y_VELOCITY, 0);
 }
 
 void ofApp::curveVelocity(SpriteSystem *sys, float curveIntensity) {
