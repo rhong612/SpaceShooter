@@ -257,7 +257,7 @@ void ofApp::checkCollisions() {
 			if (hDistance <= hContactDistance && vDistance <= vContactDistance) {
 				bool zombieDied = collide(&*it, &*missileIter);
 				if (zombieDied) {
-					score += 10;
+					score += 20;
 					//Create explosion effect
 					ParticleEmitter* particleEmitter = new ParticleEmitter();
 					particleEmitter->setLifespan(3);
