@@ -100,7 +100,6 @@ class ofApp : public ofBaseApp{
 		float currentAlienCurveIntensity;
 		static const int LEVEL_TWO_REQUIREMENT = 5;
 		static const int LEVEL_THREE_REQUIREMENT = 10;
-		static const int LEVEL_FOUR_REQUIREMENT = 50; 
 
 		static const int INITIAL_ALIEN_CURVE_INTENSITY = 70;
 		static const int INITIAL_ZOMBIE_Y_VELOCITY = 50;

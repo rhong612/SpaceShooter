@@ -124,11 +124,8 @@ void ofApp::update(){
 }
 
 void ofApp::checkLevel() {
-	if (level == 4) {
-		level = score / 50 + 3; //Increase level every 50 points after level 4
-	}
-	else if (level == 3 && score >= LEVEL_FOUR_REQUIREMENT) {
-		level = 4;
+	if (level == 3) {
+		level = score / 30 + 3; //Increase level every 30 points after level 3
 	}
 	else if (level == 2 && score >= LEVEL_THREE_REQUIREMENT) {
 		level = 3;
