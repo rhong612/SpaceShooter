@@ -55,7 +55,7 @@ void ofApp::setup(){
 	alienEmitter->direction = 180;
 	alienEmitter->rate = 800;
 	ofVec2f* enemyEmitterPosition = new ofVec2f();
-	enemyEmitterPosition->x = rand() % (ofGetWidth() - 100) + 100;
+	enemyEmitterPosition->x = rand() % ofGetWidth();
 	enemyEmitterPosition->y = 0;
 	alienEmitter->setPosition(*enemyEmitterPosition);
 	alienEmitter->sprite.damage = 10;
@@ -71,7 +71,7 @@ void ofApp::setup(){
 	zombieEmitter->direction = 180;
 	zombieEmitter->rate = 700;
 	ofVec2f* enemyEmitterPosition2 = new ofVec2f();
-	enemyEmitterPosition2->x = rand() % (ofGetWidth() - 100) + 100;
+	enemyEmitterPosition2->x = rand() % ofGetWidth();
 	enemyEmitterPosition2->y = 0;
 	zombieEmitter->setPosition(*enemyEmitterPosition2);
 	zombieEmitter->sprite.damage = 20;
@@ -114,6 +114,7 @@ void ofApp::update(){
 		(*it)->velocity = toGlm(enemyVelocitySlider);
 		(*it)->lifespan = enemyLifespanSlider;
 		*/
+		(*it)->trans.x = rand() % ofGetWidth(); //Randomize emitter position
 		(*it)->emit();
 	}
 
