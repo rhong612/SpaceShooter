@@ -147,8 +147,10 @@ void ofApp::checkCollisions() {
 			float hContactDistance = it->width / 2 + missileIter->width / 2;
 			float vContactDistance = it->height / 2 + missileIter->height / 2;
 			if (hDistance <= hContactDistance && vDistance <= vContactDistance) {
-				collide(&*missileIter, &*it);
-				score++;
+				bool alienDied = collide(&*it, &*missileIter);
+				if (alienDied) {
+					score++;
+				}
 			}
 		}
 		//Contact with turret
@@ -169,20 +171,22 @@ void ofApp::checkCollisions() {
 			float hContactDistance = it->width / 2 + missileIter->width / 2;
 			float vContactDistance = it->height / 2 + missileIter->height / 2;
 			if (hDistance <= hContactDistance && vDistance <= vContactDistance) {
-				collide(&*missileIter, &*it);
-				score++;
+				bool zombieDied = collide(&*it, &*missileIter);
 
-				//Create explosion effect
-				ParticleEmitter* particleEmitter = new ParticleEmitter();
-				particleEmitter->setLifespan(3);
-				particleEmitter->setParticleRadius(7.0);
-				particleEmitter->setVelocity(ofVec3f(0, 0, 0));
-				particleEmitter->sys->addForce(new ImpulseRadialForce(40000.0));
-				particleEmitter->position = it->trans;
-				particleEmitter->groupSize = 10;
-				particleEmitter->oneShot = true;
-				particleEmitter->start();
-				particleEmitters.push_back(particleEmitter);
+				if (zombieDied) {
+					score += 5;
+					//Create explosion effect
+					ParticleEmitter* particleEmitter = new ParticleEmitter();
+					particleEmitter->setLifespan(3);
+					particleEmitter->setParticleRadius(7.0);
+					particleEmitter->setVelocity(ofVec3f(0, 0, 0));
+					particleEmitter->sys->addForce(new ImpulseRadialForce(40000.0));
+					particleEmitter->position = it->trans;
+					particleEmitter->groupSize = 10;
+					particleEmitter->oneShot = true;
+					particleEmitter->start();
+					particleEmitters.push_back(particleEmitter);
+				}
 			}
 		}
 		//Contact with turret
@@ -211,7 +215,7 @@ void ofApp::checkCollisions() {
 }
 
 
-void ofApp::collide(Sprite* main, Sprite* other) {
+bool ofApp::collide(Sprite* main, Sprite* other) {
 	main->health -= other->damage;
 	other->health -= main->damage;
 
@@ -221,16 +225,20 @@ void ofApp::collide(Sprite* main, Sprite* other) {
 	if (other->health <= 0) {
 		other->lifespan = 0;
 	}
+	
+	return main->health <= 0;
 }
 
 
-void ofApp::collide(Sprite* main, Particle* other) {
+bool ofApp::collide(Sprite* main, Particle* other) {
 	main->health -= other->damage;
 
 	if (main->health <= 0) {
 		main->lifespan = 0;
 	}
 	other->lifespan = 0;
+
+	return main->health <= 0;
 }
 
 void ofApp::updateSprite() {

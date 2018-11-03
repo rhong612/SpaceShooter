@@ -91,8 +91,8 @@ class ofApp : public ofBaseApp{
 		void checkCollisions();
 		void checkLevel();
 		void curveVelocity(SpriteSystem*, float);
-		void collide(Sprite*, Sprite*);
-		void collide(Sprite*, Particle*);
+		bool collide(Sprite*, Sprite*);
+		bool collide(Sprite*, Particle*);
 
 		int score;
 		int level;
