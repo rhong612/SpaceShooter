@@ -12,6 +12,8 @@ void ofApp::setup(){
 	turretSprite.height = turretSprite.image.getHeight();
 	turretSprite.trans.x = ofGetWidth() / 2 - turretSprite.width / 2;
 	turretSprite.trans.y = ofGetHeight() / 2 - turretSprite.height / 2;
+	turretSprite.damage = INT_MAX;
+	turretSprite.health = 100;
 	moveDir = MoveStop;
 	idle = true;
 	leftPressed = false;
@@ -37,13 +39,15 @@ void ofApp::setup(){
 	panel.add(enemyVelocitySlider.setup("enemy velocity", ofVec3f(0, 200, 0), ofVec3f(0, 0, 0), ofVec3f(0, 2000, 0)));
 	missileEmitter.direction = directionSlider;
 	missileEmitter.rate = rateSlider;
+	missileEmitter.sprite.health = 1;
+	missileEmitter.sprite.damage = 10;
 
 	missileEmitter.loadEmitSound("sfx/laser.wav");
 
 	//Setup Alien Emitter
-	Emitter* alienEmitter = new Emitter();
+	alienEmitter = new Emitter();
 	alienEmitter->sys = &alienEnemySystem;
-	alienEmitter->loadSpriteImage("images/enemy.png");
+	alienEmitter->loadSpriteImage("images/alien.png");
 	alienEmitter->resizeImage(60, 60);
 	alienEmitter->velocity = toGlm(enemyVelocitySlider);
 	alienEmitter->lifespan = enemyLifespanSlider;
@@ -53,14 +57,34 @@ void ofApp::setup(){
 	enemyEmitterPosition->x = rand() % (ofGetWidth() - 60) + 60;
 	enemyEmitterPosition->y = 0;
 	alienEmitter->setPosition(*enemyEmitterPosition);
+	alienEmitter->sprite.damage = 10;
+	alienEmitter->sprite.health = 10;
+
+	//Setup Zombie Emitter
+	zombieEmitter = new Emitter();
+	zombieEmitter->sys = &zombieEnemySystem;
+	zombieEmitter->loadSpriteImage("images/exploding_zombie_thing.png");
+	zombieEmitter->resizeImage(50, 50);
+	zombieEmitter->velocity = ofVec3f(0, 50, 0);
+	zombieEmitter->lifespan = enemyLifespanSlider;
+	zombieEmitter->direction = 180;
+	zombieEmitter->rate = enemyRateSlider;
+	ofVec2f* enemyEmitterPosition2 = new ofVec2f();
+	enemyEmitterPosition2->x = rand() % (ofGetWidth() - 60) + 60;
+	enemyEmitterPosition2->y = 0;
+	zombieEmitter->setPosition(*enemyEmitterPosition2);
+	zombieEmitter->sprite.damage = 20;
+	zombieEmitter->sprite.health = 20;
 
 
 
 
-	enemyEmitters.push_back(*alienEmitter);
+	enemyEmitters.push_back(alienEmitter);
+	enemyEmitters.push_back(zombieEmitter);
 
 
 	score = 0;
+	level = 1;
 }
 
 //--------------------------------------------------------------
@@ -78,14 +102,26 @@ void ofApp::update(){
 
 	curveVelocity(&alienEnemySystem, 150);
 	alienEnemySystem.update();
+	zombieEnemySystem.update();
 	for (auto it = begin(enemyEmitters); it != end(enemyEmitters); it++) {
-		it->rate = enemyRateSlider;
-		it->velocity = toGlm(enemyVelocitySlider);
-		it->lifespan = enemyLifespanSlider;
-		it->emit();
+		(*it)->rate = enemyRateSlider;
+		(*it)->velocity = toGlm(enemyVelocitySlider);
+		(*it)->lifespan = enemyLifespanSlider;
+		(*it)->emit();
 	}
 
 	checkCollisions();
+	checkLevel();
+}
+
+void ofApp::checkLevel() {
+	if (level == 2 && score >= LEVEL_THREE_REQUIREMENT) {
+		level = 3;
+	}
+	else if (level == 1 && score >= LEVEL_TWO_REQUIREMENT) {
+		level = 2;
+		zombieEmitter->start();
+	}
 }
 
 void ofApp::curveVelocity(SpriteSystem *sys, float curveIntensity) {
@@ -98,18 +134,62 @@ void ofApp::curveVelocity(SpriteSystem *sys, float curveIntensity) {
 }
 
 void ofApp::checkCollisions() {
+	//Alien collisions
 	for (vector<Sprite>::iterator it = alienEnemySystem.sprites.begin(); it != alienEnemySystem.sprites.end(); it++) {
+		//Contact with player missile
 		for (vector<Sprite>::iterator missileIter = missileSystem.sprites.begin(); missileIter != missileSystem.sprites.end(); missileIter++) {			
 			float hDistance = abs( (it->trans.x + it->width / 2) - (missileIter->trans.x + missileIter->width / 2) );
 			float vDistance = abs( (it->trans.y + it->height / 2) - (missileIter->trans.y + missileIter->height / 2) );
 			float hContactDistance = it->width / 2 + missileIter->width / 2;
 			float vContactDistance = it->height / 2 + missileIter->height / 2;
 			if (hDistance <= hContactDistance && vDistance <= vContactDistance) {
-				missileIter->attack(&*it);
+				collide(&*missileIter, &*it);
 				score++;
 			}
-			
 		}
+		//Contact with turret
+		float hDistance = abs((it->trans.x + it->width / 2) - (turretSprite.trans.x + turretSprite.width / 2));
+		float vDistance = abs((it->trans.y + it->height / 2) - (turretSprite.trans.y + turretSprite.height / 2));
+		float hContactDistance = it->width / 2 + turretSprite.width / 2;
+		float vContactDistance = it->height / 2 + turretSprite.height / 2;
+		if (hDistance <= hContactDistance && vDistance <= vContactDistance) {
+			collide(&turretSprite, &*it);
+		}
+	}
+	//Zombie Collisions
+	for (vector<Sprite>::iterator it = zombieEnemySystem.sprites.begin(); it != zombieEnemySystem.sprites.end(); it++) {
+		//Contact with player missile
+		for (vector<Sprite>::iterator missileIter = missileSystem.sprites.begin(); missileIter != missileSystem.sprites.end(); missileIter++) {
+			float hDistance = abs((it->trans.x + it->width / 2) - (missileIter->trans.x + missileIter->width / 2));
+			float vDistance = abs((it->trans.y + it->height / 2) - (missileIter->trans.y + missileIter->height / 2));
+			float hContactDistance = it->width / 2 + missileIter->width / 2;
+			float vContactDistance = it->height / 2 + missileIter->height / 2;
+			if (hDistance <= hContactDistance && vDistance <= vContactDistance) {
+				collide(&*missileIter, &*it);
+				score++;
+			}
+		}
+		//Contact with turret
+		float hDistance = abs((it->trans.x + it->width / 2) - (turretSprite.trans.x + turretSprite.width / 2));
+		float vDistance = abs((it->trans.y + it->height / 2) - (turretSprite.trans.y + turretSprite.height / 2));
+		float hContactDistance = it->width / 2 + turretSprite.width / 2;
+		float vContactDistance = it->height / 2 + turretSprite.height / 2;
+		if (hDistance <= hContactDistance && vDistance <= vContactDistance) {
+			collide(&turretSprite, &*it);
+		}
+	}
+}
+
+
+void ofApp::collide(Sprite* main, Sprite* other) {
+	main->health -= other->damage;
+	other->health -= main->damage;
+
+	if (main->health <= 0) {
+		main->lifespan = 0;
+	}
+	if (other->health <= 0) {
+		other->lifespan = 0;
 	}
 }
 
@@ -154,7 +234,10 @@ void ofApp::draw(){
 		turretSprite.draw();
 		missileSystem.draw();
 		alienEnemySystem.draw();
-		arialFont.drawString(to_string(score), ofGetWidth() / 2, ofGetHeight() / 10);
+		zombieEnemySystem.draw();
+		arialFont.drawString("Score:" + to_string(score), ofGetWidth() / 5, ofGetHeight() / 10);
+		arialFont.drawString("Level:" + to_string(level), ofGetWidth() * 3/4, ofGetHeight() / 10);
+		arialFont.drawString("Health:" + to_string(turretSprite.health), ofGetWidth() / 2, ofGetHeight() - 50);
 	}
 }
 
@@ -179,9 +262,7 @@ void ofApp::keyPressed(int key){
 		switch (key) {
 			case ' ':
 				missileEmitter.start();
-				for (auto it = begin(enemyEmitters); it != end(enemyEmitters); it++) {
-					it->start();
-				}
+				alienEmitter->start();
 				break;
 			case OF_KEY_RIGHT:
 				rightPressed = true;

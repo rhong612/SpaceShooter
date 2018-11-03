@@ -19,7 +19,6 @@ public:
 	Sprite();
 	void draw();
 	float age();
-	void attack(Sprite*);
 	float speed; // in pixels/sec
 	ofVec2f velocity; // in pixels/sec
 	ofImage image;
@@ -88,9 +87,14 @@ class ofApp : public ofBaseApp{
 		void stopSprite();
 		void checkTurretBounds();
 		void checkCollisions();
+		void checkLevel();
 		void curveVelocity(SpriteSystem*, float);
+		void collide(Sprite*, Sprite*);
 
 		int score;
+		int level;
+		const int LEVEL_TWO_REQUIREMENT = 10;
+		const int LEVEL_THREE_REQUIREMENT = 20;
 
 		bool idle;
 		bool leftPressed;
@@ -105,8 +109,11 @@ class ofApp : public ofBaseApp{
 		SpriteSystem missileSystem;
 		Emitter missileEmitter;
 
-		vector<Emitter> enemyEmitters;
+		vector<Emitter*> enemyEmitters;
+		Emitter* alienEmitter;
+		Emitter* zombieEmitter;
 		SpriteSystem alienEnemySystem;
+		SpriteSystem zombieEnemySystem;
 
 		
 		ofxFloatSlider rateSlider;

@@ -19,15 +19,3 @@ void Sprite::draw() {
 float Sprite::age() {
 	return ofGetElapsedTimeMillis() - birthtime;
 }
-
-void Sprite::attack(Sprite* other) {
-	health -= other->damage;
-	other->health -= damage;
-
-	if (health <= 0) {
-		lifespan = 0;
-	}
-	if (other->health <= 0) {
-		other->lifespan = 0;
-	}
-}
