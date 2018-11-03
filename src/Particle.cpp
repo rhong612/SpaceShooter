@@ -15,6 +15,7 @@ Particle::Particle() {
 	damping = .99;
 	mass = 1;
 	color = ofColor::aquamarine;
+	damage = 10;
 }
 
 void Particle::draw() {

@@ -89,12 +89,9 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
-	particleEmitter.setRate(10);
-	particleEmitter.setLifespan(10000);
-	particleEmitter.setParticleRadius(50.0);
-	particleEmitter.setVelocity(ofVec3f(0, 0, 0));
-	particleEmitter.update();
-
+	for (auto it = begin(particleEmitters); it != end(particleEmitters); it++) {
+		(*it)->update();
+	}
 
 	missileEmitter.rate = rateSlider;
 	missileEmitter.direction = directionSlider;
@@ -174,6 +171,18 @@ void ofApp::checkCollisions() {
 			if (hDistance <= hContactDistance && vDistance <= vContactDistance) {
 				collide(&*missileIter, &*it);
 				score++;
+
+				//Create explosion effect
+				ParticleEmitter* particleEmitter = new ParticleEmitter();
+				particleEmitter->setLifespan(3);
+				particleEmitter->setParticleRadius(7.0);
+				particleEmitter->setVelocity(ofVec3f(0, 0, 0));
+				particleEmitter->sys->addForce(new ImpulseRadialForce(40000.0));
+				particleEmitter->position = it->trans;
+				particleEmitter->groupSize = 10;
+				particleEmitter->oneShot = true;
+				particleEmitter->start();
+				particleEmitters.push_back(particleEmitter);
 			}
 		}
 		//Contact with turret
@@ -183,6 +192,20 @@ void ofApp::checkCollisions() {
 		float vContactDistance = it->height / 2 + turretSprite.height / 2;
 		if (hDistance <= hContactDistance && vDistance <= vContactDistance) {
 			collide(&turretSprite, &*it);
+		}
+	}
+
+
+	for (auto it = begin(particleEmitters); it != end(particleEmitters); it++) {
+		for (auto part = begin((*it)->sys->particles); part != end((*it)->sys->particles); part++) {
+			//Enemy explosion particle contact with player turret
+			float hDistance = abs((part->position.x + part->radius) - (turretSprite.trans.x + turretSprite.width / 2));
+			float vDistance = abs((part->position.y + part->radius) - (turretSprite.trans.y + turretSprite.height / 2));
+			float hContactDistance = part->radius + turretSprite.width / 2;
+			float vContactDistance = part->radius / 2 + turretSprite.height / 2;
+			if (hDistance <= hContactDistance && vDistance <= vContactDistance) {
+				collide(&turretSprite, &*part);
+			}
 		}
 	}
 }
@@ -198,6 +221,16 @@ void ofApp::collide(Sprite* main, Sprite* other) {
 	if (other->health <= 0) {
 		other->lifespan = 0;
 	}
+}
+
+
+void ofApp::collide(Sprite* main, Particle* other) {
+	main->health -= other->damage;
+
+	if (main->health <= 0) {
+		main->lifespan = 0;
+	}
+	other->lifespan = 0;
 }
 
 void ofApp::updateSprite() {
@@ -238,12 +271,15 @@ void ofApp::draw(){
 	}
 	else {
 		panel.draw();
-		particleEmitter.draw();
 		ofSetColor(255, 255, 255); //When a particle is drawn, it calls ofSetColor(red);
 		turretSprite.draw();
 		missileSystem.draw();
 		alienEnemySystem.draw();
 		zombieEnemySystem.draw();
+		for (auto it = begin(particleEmitters); it != end(particleEmitters); it++) {
+			(*it)->draw();
+		}
+		ofSetColor(255, 255, 255); //ParticleEmitter draw calls ofSetColor(red). Need to reverse the effect.
 		arialFont.drawString("Score:" + to_string(score), ofGetWidth() / 5, ofGetHeight() / 10);
 		arialFont.drawString("Level:" + to_string(level), ofGetWidth() * 3/4, ofGetHeight() / 10);
 		arialFont.drawString("Health:" + to_string(turretSprite.health), ofGetWidth() / 2, ofGetHeight() - 50);
@@ -272,7 +308,6 @@ void ofApp::keyPressed(int key){
 			case ' ':
 				missileEmitter.start();
 				alienEmitter->start();
-				particleEmitter.start();
 				break;
 			case OF_KEY_RIGHT:
 				rightPressed = true;

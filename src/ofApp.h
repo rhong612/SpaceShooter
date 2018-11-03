@@ -92,11 +92,12 @@ class ofApp : public ofBaseApp{
 		void checkLevel();
 		void curveVelocity(SpriteSystem*, float);
 		void collide(Sprite*, Sprite*);
+		void collide(Sprite*, Particle*);
 
 		int score;
 		int level;
-		const int LEVEL_TWO_REQUIREMENT = 10;
-		const int LEVEL_THREE_REQUIREMENT = 20;
+		const int LEVEL_TWO_REQUIREMENT = 2;
+		const int LEVEL_THREE_REQUIREMENT = 10;
 
 		bool idle;
 		bool leftPressed;
@@ -117,7 +118,7 @@ class ofApp : public ofBaseApp{
 		SpriteSystem alienEnemySystem;
 		SpriteSystem zombieEnemySystem;
 
-		ParticleEmitter particleEmitter;
+		vector<ParticleEmitter*> particleEmitters;
 
 		
 		ofxFloatSlider rateSlider;
