@@ -3,6 +3,7 @@
 #include <cmath>
 
 Emitter::Emitter() {
+	sprite = new Sprite();
 	started = false;
 	rateCounter = 0;
 }
@@ -20,25 +21,25 @@ void Emitter::loadEmitSound(string path) {
 }
 
 void Emitter::loadSpriteImage(string path) {
-	sprite.image.loadImage(path);
+	sprite->image.loadImage(path);
 }
 
 void Emitter::resizeImage(float width, float height) {
-	sprite.image.resize(width, height);
+	sprite->image.resize(width, height);
 }
 
 void Emitter::emit() {
 	rateCounter++;
 	if (started && rateCounter >= MAX_RATE - rate) {
-		sprite.width = sprite.image.getWidth();
-		sprite.height = sprite.image.getHeight();
-		sprite.trans.x = trans.x - sprite.width / 2;
-		sprite.trans.y = trans.y;
-		sprite.velocity = velocity;
-		rotate(&sprite.velocity);
-		sprite.birthtime = ofGetElapsedTimeMillis();
-		sprite.lifespan = lifespan;
-		sys->add(sprite);
+		sprite->width = sprite->image.getWidth();
+		sprite->height = sprite->image.getHeight();
+		sprite->trans.x = trans.x - sprite->width / 2;
+		sprite->trans.y = trans.y;
+		sprite->velocity = velocity;
+		rotate(&sprite->velocity);
+		sprite->birthtime = ofGetElapsedTimeMillis();
+		sprite->lifespan = lifespan;
+		sys->add(*sprite);
 		if (soundPlayer.isLoaded()) {
 			soundPlayer.play();
 		}

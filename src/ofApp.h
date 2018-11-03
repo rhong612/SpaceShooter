@@ -29,6 +29,24 @@ public:
 	float width, height;
 };
 
+class Turret : public Sprite {
+public:
+	Turret();
+	float health;
+};
+
+class Enemy : public Sprite {
+public:
+	float contactDamage;
+	float health;
+	virtual void customMovement();
+};
+
+class Alien : public Enemy {
+public:
+	Alien();
+};
+
 class SpriteSystem {
 public:
 	void add(Sprite);
@@ -56,10 +74,15 @@ public:
 	bool started;
 	float direction;
 	ofSoundPlayer soundPlayer;
-	Sprite sprite;
+	Sprite* sprite;
 	static const int MAX_RATE = 60;
 };
 
+
+class AlienEmitter : public Emitter {
+public:
+	AlienEmitter(SpriteSystem*, float, float);
+};
 
 class ofApp : public ofBaseApp{
 
@@ -96,7 +119,7 @@ class ofApp : public ofBaseApp{
 		bool downPressed;
 		ofVec3f mouseLast;
 
-		Sprite turretSprite;
+		Turret turretSprite;
 		MoveDir moveDir;
 
 		SpriteSystem missileSystem;

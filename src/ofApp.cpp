@@ -42,19 +42,8 @@ void ofApp::setup(){
 
 
 	for (int i = 0; i < 3; i++) {
-		Emitter* enemyEmitter = new Emitter();
-		enemyEmitter->sys = &enemySystem;
-		enemyEmitter->loadSpriteImage("images/enemy.png");
-		enemyEmitter->resizeImage(80, 80);
-		enemyEmitter->velocity = toGlm(enemyVelocitySlider);
-		enemyEmitter->lifespan = enemyLifespanSlider;
-		enemyEmitter->direction = 180;
-		enemyEmitter->rate = enemyRateSlider;
-		ofVec2f* enemyEmitterPosition = new ofVec2f();
-		enemyEmitterPosition->x = (i + 1) * 300; //Fixed locations for testing purposes (temporary until part 3)
-		enemyEmitterPosition->y = 0;
-		enemyEmitter->setPosition(*enemyEmitterPosition);
-		enemyEmitters.push_back(*enemyEmitter);
+		AlienEmitter* alienEmitter = new AlienEmitter(&enemySystem, 100, 100);
+		enemyEmitters.push_back(*alienEmitter);
 	}
 
 
