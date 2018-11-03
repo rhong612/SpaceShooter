@@ -105,7 +105,7 @@ class ofApp : public ofBaseApp{
 
 		static const int INITIAL_ALIEN_CURVE_INTENSITY = 70;
 		static const int INITIAL_ZOMBIE_Y_VELOCITY = 50; 
-		static const int INITIAL_BLUE_ZOMBIE_Y_VELOCITY = 150;
+		static const int INITIAL_BLUE_ZOMBIE_Y_VELOCITY = 100;
 
 		bool idle;
 		bool leftPressed;
