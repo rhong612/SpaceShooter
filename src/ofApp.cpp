@@ -32,11 +32,12 @@ void ofApp::setup(){
 	missileEmitter.setPosition(missileEmitterPosition);
 
 	panel.setup();
-	panel.add(rateSlider.setup("rate", 40, 0, 60));
+	panel.add(rateSlider.setup("rate", 970, 0, 1000));
 	panel.add(directionSlider.setup("direction", 180, 0, 360));
-	panel.add(enemyRateSlider.setup("enemy rate", 20, 0, 60));
-	panel.add(enemyLifespanSlider.setup("enemy lifespan", 7000, 0, 10000));
+	panel.add(enemyRateSlider.setup("enemy rate", 20, 0, 1000));
+	panel.add(enemyLifespanSlider.setup("enemy lifespan", 7000, 0, 20000));
 	panel.add(enemyVelocitySlider.setup("enemy velocity", ofVec3f(0, 200, 0), ofVec3f(0, 0, 0), ofVec3f(0, 2000, 0)));
+	
 	missileEmitter.direction = directionSlider;
 	missileEmitter.rate = rateSlider;
 	missileEmitter.sprite.health = 1;
@@ -49,10 +50,10 @@ void ofApp::setup(){
 	alienEmitter->sys = &alienEnemySystem;
 	alienEmitter->loadSpriteImage("images/alien.png");
 	alienEmitter->resizeImage(60, 60);
-	alienEmitter->velocity = toGlm(enemyVelocitySlider);
-	alienEmitter->lifespan = enemyLifespanSlider;
+	alienEmitter->velocity = ofVec3f(0, 100, 0);
+	alienEmitter->lifespan = 12000;
 	alienEmitter->direction = 180;
-	alienEmitter->rate = enemyRateSlider;
+	alienEmitter->rate = 800;
 	ofVec2f* enemyEmitterPosition = new ofVec2f();
 	enemyEmitterPosition->x = rand() % (ofGetWidth() - 100) + 100;
 	enemyEmitterPosition->y = 0;
@@ -66,9 +67,9 @@ void ofApp::setup(){
 	zombieEmitter->loadSpriteImage("images/exploding_zombie_thing.png");
 	zombieEmitter->resizeImage(50, 50);
 	zombieEmitter->velocity = ofVec3f(0, 50, 0);
-	zombieEmitter->lifespan = enemyLifespanSlider;
+	zombieEmitter->lifespan = 20000;
 	zombieEmitter->direction = 180;
-	zombieEmitter->rate = enemyRateSlider;
+	zombieEmitter->rate = 700;
 	ofVec2f* enemyEmitterPosition2 = new ofVec2f();
 	enemyEmitterPosition2->x = rand() % (ofGetWidth() - 100) + 100;
 	enemyEmitterPosition2->y = 0;
@@ -108,24 +109,38 @@ void ofApp::update(){
 	alienEnemySystem.update();
 	zombieEnemySystem.update();
 	for (auto it = begin(enemyEmitters); it != end(enemyEmitters); it++) {
+		/*
 		(*it)->rate = enemyRateSlider;
 		(*it)->velocity = toGlm(enemyVelocitySlider);
 		(*it)->lifespan = enemyLifespanSlider;
+		*/
 		(*it)->emit();
 	}
 
 	checkCollisions();
 	checkLevel();
+	scaleEnemies();
 }
 
 void ofApp::checkLevel() {
-	if (level == 2 && score >= LEVEL_THREE_REQUIREMENT) {
+	if (level == 4) {
+		level = score / 50 + 3; //Increase level every 50 points after level 4
+	}
+	else if (level == 3 && score >= LEVEL_FOUR_REQUIREMENT) {
+		level = 4;
+	}
+	else if (level == 2 && score >= LEVEL_THREE_REQUIREMENT) {
 		level = 3;
 	}
 	else if (level == 1 && score >= LEVEL_TWO_REQUIREMENT) {
 		level = 2;
 		zombieEmitter->start();
 	}
+}
+
+void ofApp::scaleEnemies() {
+	alienEmitter->rate = level * 5 + 800;
+	zombieEmitter->rate = level * 2 + 700;
 }
 
 void ofApp::curveVelocity(SpriteSystem *sys, float curveIntensity) {

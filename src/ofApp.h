@@ -61,7 +61,7 @@ public:
 	float direction;
 	ofSoundPlayer soundPlayer;
 	Sprite sprite;
-	static const int MAX_RATE = 60;
+	static const int MAX_RATE = 1000;
 };
 
 
@@ -90,14 +90,16 @@ class ofApp : public ofBaseApp{
 		void checkTurretBounds();
 		void checkCollisions();
 		void checkLevel();
+		void scaleEnemies();
 		void curveVelocity(SpriteSystem*, float);
 		bool collide(Sprite*, Sprite*);
 		bool collide(Sprite*, Particle*);
 
 		int score;
 		int level;
-		const int LEVEL_TWO_REQUIREMENT = 2;
+		const int LEVEL_TWO_REQUIREMENT = 5;
 		const int LEVEL_THREE_REQUIREMENT = 10;
+		const int LEVEL_FOUR_REQUIREMENT = 50;
 
 		bool idle;
 		bool leftPressed;
