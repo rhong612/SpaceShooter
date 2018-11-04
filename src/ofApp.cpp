@@ -14,6 +14,7 @@ void ofApp::setup(){
 	arialFont.load("fonts/arial.ttf", 32);
 	turretSprite.image.loadImage("images/sprite.png");
 	turretSprite.speed = 500;
+	turretSprite.image.resize(60, 60);
 	turretSprite.width = turretSprite.image.getWidth();
 	turretSprite.height = turretSprite.image.getHeight();
 	turretSprite.trans.x = ofGetWidth() / 2 - turretSprite.width / 2;
@@ -141,24 +142,24 @@ void ofApp::setup(){
 	alienEmitter = new Emitter();
 	alienEmitter->sys = &alienEnemySystem;
 	alienEmitter->loadSpriteImage("images/alien.png");
-	alienEmitter->resizeImage(60, 60);
+	alienEmitter->resizeImage(50, 50);
 	alienEmitter->velocity = ofVec3f(0, 150, 0);
 	alienEmitter->lifespan = 12000;
 	alienEmitter->direction = 180;
-	alienEmitter->rate = 800;
+	alienEmitter->rate = 900;
 	alienEmitter->setPosition(ofVec2f(rand() % ofGetWidth(), 0));
-	alienEmitter->sprite.damage = 10;
+	alienEmitter->sprite.damage = 20;
 	alienEmitter->sprite.health = 10;
 
 	//Setup Zombie Emitter
 	zombieEmitter = new Emitter();
 	zombieEmitter->sys = &zombieEnemySystem;
 	zombieEmitter->loadSpriteImage("images/exploding_zombie_thing.png");
-	zombieEmitter->resizeImage(50, 50);
+	zombieEmitter->resizeImage(45, 45);
 	zombieEmitter->velocity = ofVec3f(0, INITIAL_ZOMBIE_Y_VELOCITY, 0);
 	zombieEmitter->lifespan = 20000;
 	zombieEmitter->direction = 180;
-	zombieEmitter->rate = 700;
+	zombieEmitter->rate = 600;
 	alienEmitter->setPosition(ofVec2f(rand() % ofGetWidth(), 0));
 	zombieEmitter->sprite.damage = 20;
 	zombieEmitter->sprite.health = 20;
@@ -167,11 +168,11 @@ void ofApp::setup(){
 	blueZombieEmitter = new Emitter();
 	blueZombieEmitter->sys = &blueZombieEnemySystem;
 	blueZombieEmitter->loadSpriteImage("images/random_zombie_thing.png");
-	blueZombieEmitter->resizeImage(50, 50);
+	blueZombieEmitter->resizeImage(30, 30);
 	blueZombieEmitter->velocity = ofVec3f(0, INITIAL_BLUE_ZOMBIE_Y_VELOCITY, 0);
 	blueZombieEmitter->lifespan = 50000;
 	blueZombieEmitter->direction = 180;
-	blueZombieEmitter->rate = 600;
+	blueZombieEmitter->rate = 700;
 	alienEmitter->setPosition(ofVec2f(rand() % ofGetWidth(), 0));
 	blueZombieEmitter->sprite.damage = 30;
 	blueZombieEmitter->sprite.health = 30;
@@ -297,13 +298,13 @@ void ofApp::checkLevel() {
 }
 
 void ofApp::scaleEnemies() {
-	alienEmitter->rate = level * 10 + 800;
-	zombieEmitter->rate = level * 5 + 700;
-	blueZombieEmitter->rate = level * 5 + 600;
+	alienEmitter->rate = level * 5 + 900 > MAX_ALIEN_RATE ? MAX_ALIEN_RATE : level * 5 + 900;
+	zombieEmitter->rate = level * 5 + 600 > MAX_ZOMBIE_RATE ? MAX_ZOMBIE_RATE : level * 5 + 600;
+	blueZombieEmitter->rate = level * 5 + 500 > MAX_BLUE_ZOMBIE_RATE ? MAX_BLUE_ZOMBIE_RATE : level * 5 + 500;
 
 	currentAlienCurveIntensity = currentAlienCurveIntensity < MAX_ALIEN_CURVE_INTENSITY ? level * INITIAL_ALIEN_CURVE_INTENSITY : MAX_ALIEN_CURVE_INTENSITY;
-	zombieEmitter->velocity = ofVec3f(0, level * 6.0 + INITIAL_ZOMBIE_Y_VELOCITY, 0);
-	blueZombieEmitter->velocity = ofVec3f(0, level * 6.0 + INITIAL_BLUE_ZOMBIE_Y_VELOCITY, 0);
+	zombieEmitter->velocity = ofVec3f(0, level * 10.0 + INITIAL_ZOMBIE_Y_VELOCITY, 0);
+	blueZombieEmitter->velocity = ofVec3f(0, level * 7.0 + INITIAL_BLUE_ZOMBIE_Y_VELOCITY, 0);
 }
 
 void ofApp::curveVelocity(SpriteSystem *sys, float curveIntensity) {
@@ -390,7 +391,7 @@ void ofApp::checkCollisions() {
 					particleEmitter->setLifespan(3);
 					particleEmitter->setParticleRadius(5.0);
 					particleEmitter->setVelocity(ofVec3f(0, 0, 0));
-					particleEmitter->sys->addForce(new ImpulseRadialForce(40000.0));
+					particleEmitter->sys->addForce(new ImpulseRadialForce(30000.0));
 					particleEmitter->position = ofVec3f(it->trans.x + it->width / 2.0, it->trans.y + it->height / 2.0, 0);
 					particleEmitter->groupSize = 10;
 					particleEmitter->oneShot = true;
@@ -437,7 +438,7 @@ void ofApp::checkCollisions() {
 					particleEmitter->setLifespan(3);
 					particleEmitter->setParticleRadius(5.0);
 					particleEmitter->setVelocity(ofVec3f(0, 0, 0));
-					particleEmitter->sys->addForce(new ImpulseRadialForce(40000.0));
+					particleEmitter->sys->addForce(new ImpulseRadialForce(30000.0));
 					particleEmitter->position = ofVec3f(it->trans.x + it->width / 2.0, it->trans.y + it->height / 2.0, 0);
 					particleEmitter->groupSize = 30;
 					particleEmitter->oneShot = true;

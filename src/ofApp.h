@@ -108,20 +108,23 @@ class ofApp : public ofBaseApp{
 
 		static const int INITIAL_ALIEN_CURVE_INTENSITY = 70;
 		static const int MAX_ALIEN_CURVE_INTENSITY = 500;
-		static const int INITIAL_ZOMBIE_Y_VELOCITY = 50; 
-		static const int INITIAL_BLUE_ZOMBIE_Y_VELOCITY = 100;
+		static const int INITIAL_ZOMBIE_Y_VELOCITY = 60; 
+		static const int MAX_ALIEN_RATE = 990;
+		static const int MAX_ZOMBIE_RATE = 990;
+		static const int MAX_BLUE_ZOMBIE_RATE = 970;
+		static const int INITIAL_BLUE_ZOMBIE_Y_VELOCITY = 130;
 
-		static const int RATE_UP_CHANCE = 15; //15%
+		static const int RATE_UP_CHANCE = 20; //20%
 		static const int RATE_UP_BONUS = 3;
 		static const int MAX_RATE = 985;
 
 		static const int DAMAGE_UP_CHANCE = 5; //5%
 		static const int DAMAGE_UP_BONUS = 5;
 
-		static const int WEAPON_UP_CHANCE = 10; //10%
+		static const int WEAPON_UP_CHANCE = 20; //20%
 		static const int WEAPON_UP_BONUS = 1;
 
-		static const int FIRST_AID_CHANCE = 15; //15%
+		static const int FIRST_AID_CHANCE = 20; //20%
 		static const int FIRST_AID_BONUS = 50;
 
 		static const int TURRET_MAX_HEALTH = 100;
