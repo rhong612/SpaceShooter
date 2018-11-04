@@ -6,6 +6,7 @@ void ofApp::setup(){
 	ofSetVerticalSync(true);
 
 	isGameOver = false;
+	slidersActive = false;
 
 	destroySoundPlayer.load("sfx/destroy.wav");
 	powerUpSoundPlayer.load("sfx/power_up.wav");
@@ -43,11 +44,11 @@ void ofApp::setup(){
 	mainMissileEmitter.setPosition(missileEmitterPosition);
 
 	panel.setup();
-	panel.add(rateSlider.setup("rate", 970, 0, 1000));
-	panel.add(directionSlider.setup("direction", 180, 0, 360));
-	panel.add(enemyRateSlider.setup("enemy rate", 20, 0, 1000));
-	panel.add(enemyLifespanSlider.setup("enemy lifespan", 7000, 0, 20000));
-	panel.add(enemyVelocitySlider.setup("enemy velocity", ofVec3f(0, 200, 0), ofVec3f(0, 0, 0), ofVec3f(0, 2000, 0)));
+	panel.add(rateSlider.setup("Main Missile Rate", 970, 0, 1000));
+	panel.add(directionSlider.setup("Main Missile Direction", 180, 0, 360));
+	panel.add(enemyRateSlider.setup("Enemy Rate", 990, 0, 1000));
+	panel.add(enemyLifespanSlider.setup("Enemy Lifespan", 7000, 0, 20000));
+	panel.add(enemyVelocitySlider.setup("Enemy Velocity", ofVec3f(0, 200, 0), ofVec3f(0, 0, 0), ofVec3f(0, 2000, 0)));
 	
 	mainMissileEmitter.direction = 180;
 	mainMissileEmitter.rate = 970;
@@ -211,8 +212,10 @@ void ofApp::update(){
 		(*it)->update();
 	}
 
-	//mainMissileEmitter.rate = rateSlider;
-	//mainMissileEmitter.direction = directionSlider;
+	if (slidersActive) {
+		mainMissileEmitter.rate = rateSlider;
+		mainMissileEmitter.direction = directionSlider;
+	}
 	updateSprite();
 	checkTurretBounds();
 	missileSystem.update();
@@ -243,11 +246,11 @@ void ofApp::update(){
 	zombieEnemySystem.update();
 	blueZombieEnemySystem.update();
 	for (auto it = begin(enemyEmitters); it != end(enemyEmitters); it++) {
-		/*
-		(*it)->rate = enemyRateSlider;
-		(*it)->velocity = toGlm(enemyVelocitySlider);
-		(*it)->lifespan = enemyLifespanSlider;
-		*/
+		if (slidersActive) {
+			(*it)->rate = enemyRateSlider;
+			(*it)->velocity = toGlm(enemyVelocitySlider);
+			(*it)->lifespan = enemyLifespanSlider;
+		}
 		(*it)->trans.x = rand() % ofGetWidth(); //Randomize emitter position
 		(*it)->emit();
 	}
@@ -613,7 +616,9 @@ void ofApp::draw(){
 		arialFont.drawString("Press spacebar to start!", ofGetWidth() / 2 - 200, ofGetHeight() / 2);
 	}
 	else if (!isGameOver) {
-		panel.draw();
+		if (slidersActive) {
+			panel.draw();
+		}
 		turretSprite.draw();
 		missileSystem.draw();
 		alienEnemySystem.draw();
@@ -683,6 +688,9 @@ void ofApp::keyPressed(int key){
 			case OF_KEY_DOWN:
 				downPressed = true;
 				moveSprite(MoveDown);
+				break;
+			case OF_KEY_LEFT_CONTROL:
+				slidersActive = !slidersActive;
 				break;
 		}
 	}

@@ -97,6 +97,8 @@ class ofApp : public ofBaseApp{
 		bool collide(Sprite*, Particle*);
 		void checkGameOver();
 
+		bool slidersActive;
+
 		bool isGameOver;
 
 		int score;
