@@ -97,15 +97,19 @@ class ofApp : public ofBaseApp{
 		bool collide(Sprite*, Particle*);
 		void checkGameOver();
 		void initMissileEmitters();
+		void initPowerUpEmitters();
+		void setupSliderGui();
+		void initEnemyEmitters();
 
 		bool slidersActive;
-
 		bool isGameOver;
-
+		bool idle;
 		int score;
 		int level;
 		float currentAlienCurveIntensity;
 		float lastRotated;
+		float weaponLevel;
+
 		static const int LEVEL_TWO_REQUIREMENT = 5;
 		static const int LEVEL_THREE_REQUIREMENT = 10;
 
@@ -119,20 +123,15 @@ class ofApp : public ofBaseApp{
 
 		static const int RATE_UP_CHANCE = 20; //20%
 		static const int RATE_UP_BONUS = 3;
-		static const int MAX_RATE = 985;
-
+		static const int MAX_MISSILE_FIRE_RATE = 985;
 		static const int DAMAGE_UP_CHANCE = 5; //5%
 		static const int DAMAGE_UP_BONUS = 5;
-
 		static const int WEAPON_UP_CHANCE = 20; //20%
 		static const int WEAPON_UP_BONUS = 1;
-
 		static const int FIRST_AID_CHANCE = 20; //20%
 		static const int FIRST_AID_BONUS = 50;
-
 		static const int TURRET_MAX_HEALTH = 100;
 
-		bool idle;
 		bool leftPressed;
 		bool rightPressed;
 		bool upPressed;
@@ -144,15 +143,8 @@ class ofApp : public ofBaseApp{
 
 		SpriteSystem missileSystem;
 		vector<Emitter*> missileEmitters;
-		Emitter mainMissileEmitter;
 
-		Emitter leftSideMissileEmitter;
-		Emitter rightSideMissileEmitter;
-		Emitter farLeftSideMissileEmitter;
-		Emitter farRightSideMissileEmitter;
-
-		float weaponLevel;
-
+		//Enemies
 		vector<Emitter*> enemyEmitters;
 		Emitter* alienEmitter;
 		Emitter* zombieEmitter;
@@ -161,38 +153,30 @@ class ofApp : public ofBaseApp{
 		SpriteSystem zombieEnemySystem;
 		SpriteSystem blueZombieEnemySystem;
 
-		vector<ParticleEmitter*> particleEmitters;
+		vector<ParticleEmitter*> collisionfulEffectEmitters; //'Dangerous' bullets that can hurt the player
+		vector<ParticleEmitter*> collisionLessEffectEmitters; //Just for visuals. Does not collide with anything
 
-		vector<ParticleEmitter*> explosionEffectEmitters;
-
+		//Power-ups
 		Emitter rateUpEmitter;
 		SpriteSystem rateUpSystem;
-
-
 		Emitter damageUpEmitter;
 		SpriteSystem damageUpSystem;
-
-
 		Emitter weaponUpEmitter;
 		SpriteSystem weaponUpSystem;
-
 		Emitter firstAidEmitter;
 		SpriteSystem firstAidSystem;
 
-		
+		//Slider GUI
+		ofxPanel panel;
 		ofxFloatSlider rateSlider;
 		ofxFloatSlider directionSlider;
-
 		ofxFloatSlider enemyRateSlider;
 		ofxVec3Slider enemyVelocitySlider;
 		ofxFloatSlider enemyLifespanSlider;
 
-		ofxPanel panel;
-
 		ofTrueTypeFont arialFont;
 
 		ofImage healthBar;
-
 
 		ofSoundPlayer powerUpSoundPlayer;
 		ofSoundPlayer destroySoundPlayer;

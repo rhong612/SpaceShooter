@@ -5,14 +5,13 @@
 void ofApp::setup(){
 	ofSetVerticalSync(true);
 
-	isGameOver = false;
-	slidersActive = false;
-
+	//Load some assets
 	destroySoundPlayer.load("sfx/destroy.wav");
 	powerUpSoundPlayer.load("sfx/power_up.wav");
 	damageSoundPlayer.load("sfx/damage.wav");
-
 	arialFont.load("fonts/arial.ttf", 32);
+
+	//Setup turret
 	turretSprite.image.loadImage("images/sprite.png");
 	turretSprite.speed = 500;
 	turretSprite.image.resize(60, 60);
@@ -22,33 +21,129 @@ void ofApp::setup(){
 	turretSprite.trans.y = ofGetHeight() / 2 - turretSprite.height / 2;
 	turretSprite.damage = INT_MAX;
 	turretSprite.health = TURRET_MAX_HEALTH;
+
+	//Health bar
+	healthBar.loadImage("images/healthBar.png");
+	healthBar.resize(ofGetWidth(), healthBar.getHeight());
+
+	//Initialize variables
 	moveDir = MoveStop;
 	idle = true;
 	leftPressed = false;
 	rightPressed = false;
 	upPressed = false;
 	downPressed = false;
+	isGameOver = false;
+	slidersActive = false;
+	score = 0;
+	level = 1;
+	lastRotated = ofGetElapsedTimeMillis();
+	currentAlienCurveIntensity = INITIAL_ALIEN_CURVE_INTENSITY;
+	weaponLevel = 1;
 
-	healthBar.loadImage("images/healthBar.png");
-	healthBar.resize(ofGetWidth(), healthBar.getHeight());
-
-
-
-	missileEmitters.push_back(&mainMissileEmitter);
-	missileEmitters.push_back(&leftSideMissileEmitter);
-	missileEmitters.push_back(&rightSideMissileEmitter);
-	missileEmitters.push_back(&farLeftSideMissileEmitter);
-	missileEmitters.push_back(&farRightSideMissileEmitter);
 	initMissileEmitters();
-	
 
+	setupSliderGui();
+	initPowerUpEmitters();
+	initEnemyEmitters();
+}
+
+// Initializes all of the enemy emitters and puts them into the enemyEmitters vector
+//
+void ofApp::initEnemyEmitters() {
+	//Setup Alien Emitter
+	alienEmitter = new Emitter();
+	alienEmitter->sys = &alienEnemySystem;
+	alienEmitter->loadSpriteImage("images/alien.png");
+	alienEmitter->resizeImage(50, 50);
+	alienEmitter->velocity = ofVec3f(0, 150, 0);
+	alienEmitter->lifespan = 12000;
+	alienEmitter->direction = 180;
+	alienEmitter->rate = 900;
+	alienEmitter->setPosition(ofVec2f(rand() % ofGetWidth(), 0));
+	alienEmitter->sprite.damage = 20;
+	alienEmitter->sprite.health = 10;
+
+	//Setup Zombie Emitter
+	zombieEmitter = new Emitter();
+	zombieEmitter->sys = &zombieEnemySystem;
+	zombieEmitter->loadSpriteImage("images/exploding_zombie_thing.png");
+	zombieEmitter->resizeImage(45, 45);
+	zombieEmitter->velocity = ofVec3f(0, INITIAL_ZOMBIE_Y_VELOCITY, 0);
+	zombieEmitter->lifespan = 20000;
+	zombieEmitter->direction = 180;
+	zombieEmitter->rate = 600;
+	zombieEmitter->setPosition(ofVec2f(rand() % ofGetWidth(), 0));
+	zombieEmitter->sprite.damage = 20;
+	zombieEmitter->sprite.health = 20;
+
+	//Setup Blue Zombie Emitter;
+	blueZombieEmitter = new Emitter();
+	blueZombieEmitter->sys = &blueZombieEnemySystem;
+	blueZombieEmitter->loadSpriteImage("images/random_zombie_thing.png");
+	blueZombieEmitter->resizeImage(30, 30);
+	blueZombieEmitter->velocity = ofVec3f(0, INITIAL_BLUE_ZOMBIE_Y_VELOCITY, 0);
+	blueZombieEmitter->lifespan = 50000;
+	blueZombieEmitter->direction = 180;
+	blueZombieEmitter->rate = 700;
+	blueZombieEmitter->setPosition(ofVec2f(rand() % ofGetWidth(), 0));
+	blueZombieEmitter->sprite.damage = 30;
+	blueZombieEmitter->sprite.health = 30;
+
+	enemyEmitters.push_back(alienEmitter);
+	enemyEmitters.push_back(zombieEmitter);
+	enemyEmitters.push_back(blueZombieEmitter);
+
+}
+
+// Sets up slider GUI for testing values. Can be toggled on-off with the 'Ctrl' key
+//
+void ofApp::setupSliderGui() {
 	panel.setup();
-	panel.add(rateSlider.setup("Main Missile Rate", 970, 0, 1000));
-	panel.add(directionSlider.setup("Main Missile Direction", 180, 0, 360));
+	panel.add(rateSlider.setup("Missile Rate", 970, 0, 1000));
+	panel.add(directionSlider.setup("Missile Direction", 180, 0, 360));
 	panel.add(enemyRateSlider.setup("Enemy Rate", 990, 0, 1000));
 	panel.add(enemyLifespanSlider.setup("Enemy Lifespan", 7000, 0, 20000));
 	panel.add(enemyVelocitySlider.setup("Enemy Velocity", ofVec3f(0, 200, 0), ofVec3f(0, 0, 0), ofVec3f(0, 2000, 0)));
+}
 
+// Initializes all of missile emitters and puts them in the missileEmitters vector
+//
+void ofApp::initMissileEmitters() {
+	int i = 0;
+	float directions[5] = { 180, 170, 190, 160, 200 };
+	ofVec2f missileEmitterPosition;
+	missileEmitterPosition.x = turretSprite.trans.x + turretSprite.width / 2;
+	missileEmitterPosition.y = turretSprite.trans.y;
+
+
+	missileEmitters.push_back(new Emitter());
+	missileEmitters.push_back(new Emitter());
+	missileEmitters.push_back(new Emitter());
+	missileEmitters.push_back(new Emitter());
+	missileEmitters.push_back(new Emitter());
+
+	for (auto it = begin(missileEmitters); it != end(missileEmitters); it++) {
+		(*it)->sys = &missileSystem;
+		(*it)->loadSpriteImage("images/missile.png");
+		(*it)->resizeImage(15, 15);
+		(*it)->velocity = ofVec2f(0, -600);
+		(*it)->lifespan = 3000;
+		(*it)->setPosition(missileEmitterPosition);
+		(*it)->direction = directions[i];
+		(*it)->rate = 970;
+		(*it)->sprite.health = 1;
+		(*it)->sprite.damage = 10;
+		if (i == 0) {
+			(*it)->loadEmitSound("sfx/laser.wav");
+		}
+		i++;
+	}
+}
+
+// Initializes all of the power-up emitters
+//
+void ofApp::initPowerUpEmitters() {
 	rateUpEmitter.sys = &rateUpSystem;
 	rateUpEmitter.loadSpriteImage("images/rateUpPowerUp.png");
 	rateUpEmitter.resizeImage(25, 25);
@@ -84,82 +179,6 @@ void ofApp::setup(){
 	firstAidEmitter.direction = 180;
 	firstAidEmitter.rate = Emitter::MAX_RATE; //Fire every time emit() is called
 	firstAidEmitter.start();
-
-	//Setup Alien Emitter
-	alienEmitter = new Emitter();
-	alienEmitter->sys = &alienEnemySystem;
-	alienEmitter->loadSpriteImage("images/alien.png");
-	alienEmitter->resizeImage(50, 50);
-	alienEmitter->velocity = ofVec3f(0, 150, 0);
-	alienEmitter->lifespan = 12000;
-	alienEmitter->direction = 180;
-	alienEmitter->rate = 900;
-	alienEmitter->setPosition(ofVec2f(rand() % ofGetWidth(), 0));
-	alienEmitter->sprite.damage = 20;
-	alienEmitter->sprite.health = 10;
-
-	//Setup Zombie Emitter
-	zombieEmitter = new Emitter();
-	zombieEmitter->sys = &zombieEnemySystem;
-	zombieEmitter->loadSpriteImage("images/exploding_zombie_thing.png");
-	zombieEmitter->resizeImage(45, 45);
-	zombieEmitter->velocity = ofVec3f(0, INITIAL_ZOMBIE_Y_VELOCITY, 0);
-	zombieEmitter->lifespan = 20000;
-	zombieEmitter->direction = 180;
-	zombieEmitter->rate = 600;
-	alienEmitter->setPosition(ofVec2f(rand() % ofGetWidth(), 0));
-	zombieEmitter->sprite.damage = 20;
-	zombieEmitter->sprite.health = 20;
-
-	//Setup Blue Zombie Emitter;
-	blueZombieEmitter = new Emitter();
-	blueZombieEmitter->sys = &blueZombieEnemySystem;
-	blueZombieEmitter->loadSpriteImage("images/random_zombie_thing.png");
-	blueZombieEmitter->resizeImage(30, 30);
-	blueZombieEmitter->velocity = ofVec3f(0, INITIAL_BLUE_ZOMBIE_Y_VELOCITY, 0);
-	blueZombieEmitter->lifespan = 50000;
-	blueZombieEmitter->direction = 180;
-	blueZombieEmitter->rate = 700;
-	alienEmitter->setPosition(ofVec2f(rand() % ofGetWidth(), 0));
-	blueZombieEmitter->sprite.damage = 30;
-	blueZombieEmitter->sprite.health = 30;
-
-
-	enemyEmitters.push_back(alienEmitter);
-	enemyEmitters.push_back(zombieEmitter);
-	enemyEmitters.push_back(blueZombieEmitter);
-
-
-	score = 0;
-	level = 1;
-	currentAlienCurveIntensity = INITIAL_ALIEN_CURVE_INTENSITY;
-	lastRotated = ofGetElapsedTimeMillis();
-
-	weaponLevel = 1;
-}
-
-void ofApp::initMissileEmitters() {
-	int i = 0;
-	float directions[5] = { 180, 170, 190, 160, 200 };
-	ofVec2f missileEmitterPosition;
-	missileEmitterPosition.x = turretSprite.trans.x + turretSprite.width / 2;
-	missileEmitterPosition.y = turretSprite.trans.y;
-	for (auto it = begin(missileEmitters); it != end(missileEmitters); it++) {
-		(*it)->sys = &missileSystem;
-		(*it)->loadSpriteImage("images/missile.png");
-		(*it)->resizeImage(15, 15);
-		(*it)->velocity = ofVec2f(0, -600);
-		(*it)->lifespan = 3000;
-		(*it)->setPosition(missileEmitterPosition);
-		(*it)->direction = directions[i];
-		(*it)->rate = 970;
-		(*it)->sprite.health = 1;
-		(*it)->sprite.damage = 10;
-		if (i == 0) {
-			(*it)->loadEmitSound("sfx/laser.wav");
-		}
-		i++;
-	}
 }
 
 //--------------------------------------------------------------
@@ -169,46 +188,51 @@ void ofApp::update(){
 		return;
 	}
 
-	for (auto it = begin(particleEmitters); it != end(particleEmitters); it++) {
-		(*it)->update();
-	}
-	for (auto it = begin(explosionEffectEmitters); it != end(explosionEffectEmitters); it++) {
-		(*it)->update();
+	if (slidersActive) {
+		for (auto it = begin(missileEmitters); it != end(missileEmitters); it++) {
+			(*it)->rate = rateSlider;
+			(*it)->direction = directionSlider;
+		}
 	}
 
-	if (slidersActive) {
-		mainMissileEmitter.rate = rateSlider;
-		mainMissileEmitter.direction = directionSlider;
-	}
+	//Update turret and missiles
 	updateSprite();
 	checkTurretBounds();
 	missileSystem.update();
-	ofVec2f missileEmitterPosition;
-	missileEmitterPosition.x = turretSprite.trans.x + turretSprite.width / 2;
-	missileEmitterPosition.y = turretSprite.trans.y;
-	mainMissileEmitter.setPosition(missileEmitterPosition);
-	mainMissileEmitter.emit();
 
-	leftSideMissileEmitter.setPosition(missileEmitterPosition);
-	leftSideMissileEmitter.emit();
-	rightSideMissileEmitter.setPosition(missileEmitterPosition);
-	rightSideMissileEmitter.emit();
-	farLeftSideMissileEmitter.setPosition(missileEmitterPosition);
-	farLeftSideMissileEmitter.emit();
-	farRightSideMissileEmitter.setPosition(missileEmitterPosition);
-	farRightSideMissileEmitter.emit();
-
-
+	//Update power-up systems
 	rateUpSystem.update();
 	damageUpSystem.update();
 	weaponUpSystem.update();
 	firstAidSystem.update();
 
+	//Custom movement for specific types of enemies
 	curveVelocity(&alienEnemySystem, currentAlienCurveIntensity);
 	randomizeMovement(&blueZombieEnemySystem);
+
+	//Update enemy systems
 	alienEnemySystem.update();
 	zombieEnemySystem.update();
 	blueZombieEnemySystem.update();
+
+	//Update particle emitters
+	for (auto it = begin(collisionfulEffectEmitters); it != end(collisionfulEffectEmitters); it++) {
+		(*it)->update();
+	}
+	for (auto it = begin(collisionLessEffectEmitters); it != end(collisionLessEffectEmitters); it++) {
+		(*it)->update();
+	}
+
+	//Emit missiles
+	ofVec2f missileEmitterPosition;
+	missileEmitterPosition.x = turretSprite.trans.x + turretSprite.width / 2;
+	missileEmitterPosition.y = turretSprite.trans.y;
+	for (auto it = begin(missileEmitters); it != end(missileEmitters); it++) {
+		(*it)->setPosition(missileEmitterPosition);
+		(*it)->emit();
+	}
+
+	//Emit enemies
 	for (auto it = begin(enemyEmitters); it != end(enemyEmitters); it++) {
 		if (slidersActive) {
 			(*it)->rate = enemyRateSlider;
@@ -222,16 +246,20 @@ void ofApp::update(){
 	checkCollisions();
 	checkLevel();
 	scaleEnemies();
-
 	healthBar.resize(ofGetWidth() * ((float) turretSprite.health / (float) TURRET_MAX_HEALTH), healthBar.getHeight());
 }
 
+
+// Sets a boolean that determines if the player lost the game
+//
 void ofApp::checkGameOver() {
 	if (turretSprite.health <= 0) {
 		isGameOver = true;
 	}
 }
 
+// Randomizes movement by randomly rotating the velocity of the sprites given. Y-value will always be positive to ensure constant downwards movement.
+//
 void ofApp::randomizeMovement(SpriteSystem* sys) {
 	//Randomize every 2 seconds
 	if (ofGetElapsedTimeMillis() - lastRotated >= 2000) {
@@ -250,30 +278,39 @@ void ofApp::randomizeMovement(SpriteSystem* sys) {
 	}
 }
 
+// Modifies the current level based on the player's score
+//
 void ofApp::checkLevel() {
 	if (level >= 3) {
 		level = (score / 30) + 3; //Increase level every 30 points after level 3
 	}
 	else if (level == 2 && score >= LEVEL_THREE_REQUIREMENT) {
 		level = 3;
-		blueZombieEmitter->start();
+		blueZombieEmitter->start(); //Blue zombies start appearing at level 3
 	}
 	else if (level == 1 && score >= LEVEL_TWO_REQUIREMENT) {
 		level = 2;
-		zombieEmitter->start();
+		zombieEmitter->start(); //Normal zombies start appearing at level 2
 	}
 }
 
+// Scales enemies according to the current level
+//
 void ofApp::scaleEnemies() {
+	//Increase enemy spawn rate based on level
 	alienEmitter->rate = level * 5 + 900 > MAX_ALIEN_RATE ? MAX_ALIEN_RATE : level * 5 + 900;
 	zombieEmitter->rate = level * 5 + 600 > MAX_ZOMBIE_RATE ? MAX_ZOMBIE_RATE : level * 5 + 600;
 	blueZombieEmitter->rate = level * 5 + 500 > MAX_BLUE_ZOMBIE_RATE ? MAX_BLUE_ZOMBIE_RATE : level * 5 + 500;
 
+	//Alien: Increase curve intensity
+	//Zombie: Increase velocity
+	//Blue zombie: Increase velocity
 	currentAlienCurveIntensity = currentAlienCurveIntensity < MAX_ALIEN_CURVE_INTENSITY ? level * INITIAL_ALIEN_CURVE_INTENSITY : MAX_ALIEN_CURVE_INTENSITY;
 	zombieEmitter->velocity = ofVec3f(0, level * 10.0 + INITIAL_ZOMBIE_Y_VELOCITY, 0);
 	blueZombieEmitter->velocity = ofVec3f(0, level * 7.0 + INITIAL_BLUE_ZOMBIE_Y_VELOCITY, 0);
 }
 
+// Simulates a wave-like motion with the given sprites
 void ofApp::curveVelocity(SpriteSystem *sys, float curveIntensity) {
 	ofVec2f newEnemyVelocity;
 	for (auto it = begin(sys->sprites); it != end(sys->sprites); it++) {
@@ -283,6 +320,8 @@ void ofApp::curveVelocity(SpriteSystem *sys, float curveIntensity) {
 	}
 }
 
+// Checks for collisions and handles them accordingly.
+//
 void ofApp::checkCollisions() {
 	//Alien collisions
 	for (vector<Sprite>::iterator it = alienEnemySystem.sprites.begin(); it != alienEnemySystem.sprites.end(); it++) {
@@ -309,7 +348,7 @@ void ofApp::checkCollisions() {
 					explosionEffectEmitter->oneShot = true;
 					explosionEffectEmitter->color = ofColor::blue;
 					explosionEffectEmitter->start();
-					explosionEffectEmitters.push_back(explosionEffectEmitter);
+					collisionLessEffectEmitters.push_back(explosionEffectEmitter);
 
 					int randomNum = rand() % 100;
 					if (randomNum <= DAMAGE_UP_CHANCE) {
@@ -364,7 +403,7 @@ void ofApp::checkCollisions() {
 					particleEmitter->groupSize = 10;
 					particleEmitter->oneShot = true;
 					particleEmitter->start();
-					particleEmitters.push_back(particleEmitter);
+					collisionfulEffectEmitters.push_back(particleEmitter);
 
 
 
@@ -411,7 +450,7 @@ void ofApp::checkCollisions() {
 					particleEmitter->groupSize = 30;
 					particleEmitter->oneShot = true;
 					particleEmitter->start();
-					particleEmitters.push_back(particleEmitter);
+					collisionfulEffectEmitters.push_back(particleEmitter);
 
 
 					int randomNum = rand() % 100;
@@ -435,7 +474,7 @@ void ofApp::checkCollisions() {
 	}
 
 	//Check for contact between explosion particles and player turret
-	for (auto it = begin(particleEmitters); it != end(particleEmitters); it++) {
+	for (auto it = begin(collisionfulEffectEmitters); it != end(collisionfulEffectEmitters); it++) {
 		for (auto part = begin((*it)->sys->particles); part != end((*it)->sys->particles); part++) {
 			float hDistance = abs((part->position.x + part->radius) - (turretSprite.trans.x + turretSprite.width / 2));
 			float vDistance = abs((part->position.y + part->radius) - (turretSprite.trans.y + turretSprite.height / 2));
@@ -459,7 +498,7 @@ void ofApp::checkCollisions() {
 			//Power-up received
 			powerUpSoundPlayer.play();
 			for (auto it = begin(missileEmitters); it != end(missileEmitters); it++) {
-				if ((*it)->rate + RATE_UP_BONUS <= MAX_RATE) {
+				if ((*it)->rate + RATE_UP_BONUS <= MAX_MISSILE_FIRE_RATE) {
 					(*it)->rate += RATE_UP_BONUS;
 				}
 			}
@@ -517,7 +556,8 @@ void ofApp::checkCollisions() {
 	}
 }
 
-
+// Handles damage calculation when a collision occurs between 2 sprites. Returns true if the main sprite is destroyed, false otherwise
+//
 bool ofApp::collide(Sprite* main, Sprite* other) {
 	main->health -= other->damage;
 	other->health -= main->damage;
@@ -532,7 +572,8 @@ bool ofApp::collide(Sprite* main, Sprite* other) {
 	return main->health <= 0;
 }
 
-
+// Handles damage calculation when a collision occurs between a sprite and a particle. Returns true if the sprite is destroyed, false otherwise
+//
 bool ofApp::collide(Sprite* main, Particle* other) {
 	main->health -= other->damage;
 
@@ -544,6 +585,8 @@ bool ofApp::collide(Sprite* main, Particle* other) {
 	return main->health <= 0;
 }
 
+// Update the turret sprite's location
+//
 void ofApp::updateSprite() {
 	float dist = turretSprite.speed * 1 / ofGetFrameRate();
 	ofVec3f dir;
@@ -567,10 +610,14 @@ void ofApp::updateSprite() {
 	turretSprite.trans += dir;
 }
 
+// Sets moveDir to the arrow key pressed
+//
 void ofApp::moveSprite(MoveDir dir) {
 	moveDir = dir;
 }
 
+// Stops the sprite
+//
 void ofApp::stopSprite() {
 	moveDir = MoveStop;
 }
@@ -594,14 +641,13 @@ void ofApp::draw(){
 		weaponUpSystem.draw();
 		firstAidSystem.draw();
 		healthBar.draw(0, ofGetHeight() - healthBar.getHeight());
-		for (auto it = begin(particleEmitters); it != end(particleEmitters); it++) {
+		for (auto it = begin(collisionfulEffectEmitters); it != end(collisionfulEffectEmitters); it++) {
 			(*it)->draw();
 		}
-
-		for (auto it = begin(explosionEffectEmitters); it != end(explosionEffectEmitters); it++) {
+		for (auto it = begin(collisionLessEffectEmitters); it != end(collisionLessEffectEmitters); it++) {
 			(*it)->draw();
 		}
-		ofSetColor(255, 255, 255); //ParticleEmitter draw calls ofSetColor(...). Need to reverse the effect.
+		ofSetColor(255, 255, 255); //Particle draw calls ofSetColor(...). Need to reverse the effect.
 	}
 	else {
 		arialFont.drawString("Game Over!", ofGetWidth() * 1/4, ofGetHeight() / 2);
@@ -611,6 +657,8 @@ void ofApp::draw(){
 	arialFont.drawString("Health:" + to_string(turretSprite.health), ofGetWidth() * 1 / 3, ofGetHeight() - 50);
 }
 
+// Prevents the turret from exiting out of bounds
+//
 void ofApp::checkTurretBounds() {
 	if (turretSprite.trans.x < 0) {
 		turretSprite.trans.x = 0;
