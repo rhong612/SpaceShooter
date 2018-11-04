@@ -181,4 +181,7 @@ class ofApp : public ofBaseApp{
 		ofTrueTypeFont arialFont;
 
 		ofImage healthBar;
+
+
+		ofSoundPlayer powerUpSoundPlayer;
 };

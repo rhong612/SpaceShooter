@@ -5,6 +5,8 @@
 void ofApp::setup(){
 	ofSetVerticalSync(true);
 
+	powerUpSoundPlayer.load("sfx/power_up.wav");
+
 	arialFont.load("fonts/arial.ttf", 32);
 	turretSprite.image.loadImage("images/sprite.png");
 	turretSprite.speed = 500;
@@ -464,6 +466,7 @@ void ofApp::checkCollisions() {
 		float vContactDistance = it->height / 2 + turretSprite.height / 2;
 		if (hDistance <= hContactDistance && vDistance <= vContactDistance) {
 			//Power-up received
+			powerUpSoundPlayer.play();
 			for (auto it = begin(missileEmitters); it != end(missileEmitters); it++) {
 				(*it)->rate += RATE_UP_BONUS;
 			}
@@ -480,6 +483,7 @@ void ofApp::checkCollisions() {
 		float vContactDistance = it->height / 2 + turretSprite.height / 2;
 		if (hDistance <= hContactDistance && vDistance <= vContactDistance) {
 			//Power-up received
+			powerUpSoundPlayer.play();
 			for (auto it = begin(missileEmitters); it != end(missileEmitters); it++) {
 				(*it)->sprite.damage += DAMAGE_UP_BONUS;
 			}
@@ -496,6 +500,7 @@ void ofApp::checkCollisions() {
 		float vContactDistance = it->height / 2 + turretSprite.height / 2;
 		if (hDistance <= hContactDistance && vDistance <= vContactDistance) {
 			//Power-up received
+			powerUpSoundPlayer.play();
 			if (weaponLevel < missileEmitters.size()) {
 				weaponLevel += WEAPON_UP_BONUS;
 			}
@@ -512,6 +517,7 @@ void ofApp::checkCollisions() {
 		float vContactDistance = it->height / 2 + turretSprite.height / 2;
 		if (hDistance <= hContactDistance && vDistance <= vContactDistance) {
 			//Healing received
+			powerUpSoundPlayer.play();
 			turretSprite.health = turretSprite.health + 50 > 100 ? 100 : turretSprite.health + 50;
 			it->lifespan = 0;
 		}
