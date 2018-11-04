@@ -5,6 +5,7 @@
 void ofApp::setup(){
 	ofSetVerticalSync(true);
 
+	destroySoundPlayer.load("sfx/destroy.wav");
 	powerUpSoundPlayer.load("sfx/power_up.wav");
 
 	arialFont.load("fonts/arial.ttf", 32);
@@ -313,6 +314,7 @@ void ofApp::checkCollisions() {
 				bool alienDied = collide(&*it, &*missileIter);
 				if (alienDied) {
 					score++;
+					destroySoundPlayer.play();
 
 					//Create explosion effect
 					ParticleEmitter* explosionEffectEmitter = new ParticleEmitter();
@@ -366,6 +368,7 @@ void ofApp::checkCollisions() {
 				bool zombieDied = collide(&*it, &*missileIter);
 
 				if (zombieDied) {
+					destroySoundPlayer.play();
 					score += 5;
 					//Create death explosion effect
 					ParticleEmitter* particleEmitter = new ParticleEmitter();
@@ -411,6 +414,7 @@ void ofApp::checkCollisions() {
 			if (hDistance <= hContactDistance && vDistance <= vContactDistance) {
 				bool zombieDied = collide(&*it, &*missileIter);
 				if (zombieDied) {
+					destroySoundPlayer.play();
 					score += 20;
 					//Create death explosion effect
 					ParticleEmitter* particleEmitter = new ParticleEmitter();
