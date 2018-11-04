@@ -286,9 +286,9 @@ void ofApp::scaleEnemies() {
 	zombieEmitter->rate = level * 5 + 700;
 	blueZombieEmitter->rate = level * 5 + 600;
 
-	currentAlienCurveIntensity = level * INITIAL_ALIEN_CURVE_INTENSITY;
-	zombieEmitter->velocity = ofVec3f(0, level * 5.0 + INITIAL_ZOMBIE_Y_VELOCITY, 0);
-	blueZombieEmitter->velocity = ofVec3f(0, level * 5.0 + INITIAL_BLUE_ZOMBIE_Y_VELOCITY, 0);
+	currentAlienCurveIntensity = currentAlienCurveIntensity < MAX_ALIEN_CURVE_INTENSITY ? level * INITIAL_ALIEN_CURVE_INTENSITY : MAX_ALIEN_CURVE_INTENSITY;
+	zombieEmitter->velocity = ofVec3f(0, level * 6.0 + INITIAL_ZOMBIE_Y_VELOCITY, 0);
+	blueZombieEmitter->velocity = ofVec3f(0, level * 6.0 + INITIAL_BLUE_ZOMBIE_Y_VELOCITY, 0);
 }
 
 void ofApp::curveVelocity(SpriteSystem *sys, float curveIntensity) {
@@ -468,7 +468,9 @@ void ofApp::checkCollisions() {
 			//Power-up received
 			powerUpSoundPlayer.play();
 			for (auto it = begin(missileEmitters); it != end(missileEmitters); it++) {
-				(*it)->rate += RATE_UP_BONUS;
+				if ((*it)->rate + RATE_UP_BONUS <= MAX_RATE) {
+					(*it)->rate += RATE_UP_BONUS;
+				}
 			}
 			it->lifespan = 0;
 		}
