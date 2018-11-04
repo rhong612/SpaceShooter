@@ -21,15 +21,15 @@ void ofApp::setup(){
 	upPressed = false;
 	downPressed = false;
 	
-	missileEmitter.sys = &missileSystem;
-	missileEmitter.loadSpriteImage("images/missile.png");
-	missileEmitter.resizeImage(15, 15);
-	missileEmitter.velocity = ofVec2f(0, -600);
-	missileEmitter.lifespan = 3000;
+	mainMissileEmitter.sys = &missileSystem;
+	mainMissileEmitter.loadSpriteImage("images/missile.png");
+	mainMissileEmitter.resizeImage(15, 15);
+	mainMissileEmitter.velocity = ofVec2f(0, -600);
+	mainMissileEmitter.lifespan = 3000;
 	ofVec2f missileEmitterPosition;
 	missileEmitterPosition.x = turretSprite.trans.x + turretSprite.width / 2;
 	missileEmitterPosition.y = turretSprite.trans.y;
-	missileEmitter.setPosition(missileEmitterPosition);
+	mainMissileEmitter.setPosition(missileEmitterPosition);
 
 	panel.setup();
 	panel.add(rateSlider.setup("rate", 970, 0, 1000));
@@ -38,12 +38,57 @@ void ofApp::setup(){
 	panel.add(enemyLifespanSlider.setup("enemy lifespan", 7000, 0, 20000));
 	panel.add(enemyVelocitySlider.setup("enemy velocity", ofVec3f(0, 200, 0), ofVec3f(0, 0, 0), ofVec3f(0, 2000, 0)));
 	
-	missileEmitter.direction = directionSlider;
-	missileEmitter.rate = 970;
-	missileEmitter.sprite.health = 1;
-	missileEmitter.sprite.damage = 10;
+	mainMissileEmitter.direction = 180;
+	mainMissileEmitter.rate = 970;
+	mainMissileEmitter.sprite.health = 1;
+	mainMissileEmitter.sprite.damage = 10;
 
-	missileEmitter.loadEmitSound("sfx/laser.wav");
+	mainMissileEmitter.loadEmitSound("sfx/laser.wav");
+
+	leftSideMissileEmitter.sys = &missileSystem;
+	leftSideMissileEmitter.loadSpriteImage("images/missile.png");
+	leftSideMissileEmitter.resizeImage(15, 15);
+	leftSideMissileEmitter.velocity = ofVec2f(0, -600);
+	leftSideMissileEmitter.lifespan = 3000;
+	leftSideMissileEmitter.setPosition(missileEmitterPosition);
+	leftSideMissileEmitter.direction = 190;
+	leftSideMissileEmitter.rate = 970;
+	leftSideMissileEmitter.sprite.health = 1;
+	leftSideMissileEmitter.sprite.damage = 10;
+
+	farLeftSideMissileEmitter.sys = &missileSystem;
+	farLeftSideMissileEmitter.loadSpriteImage("images/missile.png");
+	farLeftSideMissileEmitter.resizeImage(15, 15);
+	farLeftSideMissileEmitter.velocity = ofVec2f(0, -600);
+	farLeftSideMissileEmitter.lifespan = 3000;
+	farLeftSideMissileEmitter.setPosition(missileEmitterPosition);
+	farLeftSideMissileEmitter.direction = 200;
+	farLeftSideMissileEmitter.rate = 970;
+	farLeftSideMissileEmitter.sprite.health = 1;
+	farLeftSideMissileEmitter.sprite.damage = 10;
+
+
+	rightSideMissileEmitter.sys = &missileSystem;
+	rightSideMissileEmitter.loadSpriteImage("images/missile.png");
+	rightSideMissileEmitter.resizeImage(15, 15);
+	rightSideMissileEmitter.velocity = ofVec2f(0, -600);
+	rightSideMissileEmitter.lifespan = 3000;
+	rightSideMissileEmitter.setPosition(missileEmitterPosition);
+	rightSideMissileEmitter.direction = 170;
+	rightSideMissileEmitter.rate = 970;
+	rightSideMissileEmitter.sprite.health = 1;
+	rightSideMissileEmitter.sprite.damage = 10;
+
+	farRightSideMissileEmitter.sys = &missileSystem;
+	farRightSideMissileEmitter.loadSpriteImage("images/missile.png");
+	farRightSideMissileEmitter.resizeImage(15, 15);
+	farRightSideMissileEmitter.velocity = ofVec2f(0, -600);
+	farRightSideMissileEmitter.lifespan = 3000;
+	farRightSideMissileEmitter.setPosition(missileEmitterPosition);
+	farRightSideMissileEmitter.direction = 160;
+	farRightSideMissileEmitter.rate = 970;
+	farRightSideMissileEmitter.sprite.health = 1;
+	farRightSideMissileEmitter.sprite.damage = 10;
 
 
 	rateUpEmitter.sys = &rateUpSystem;
@@ -117,11 +162,19 @@ void ofApp::setup(){
 	enemyEmitters.push_back(zombieEmitter);
 	enemyEmitters.push_back(blueZombieEmitter);
 
+	missileEmitters.push_back(&mainMissileEmitter);
+	missileEmitters.push_back(&leftSideMissileEmitter);
+	missileEmitters.push_back(&rightSideMissileEmitter);
+	missileEmitters.push_back(&farLeftSideMissileEmitter);
+	missileEmitters.push_back(&farRightSideMissileEmitter);
+
 
 	score = 0;
 	level = 1;
 	currentAlienCurveIntensity = INITIAL_ALIEN_CURVE_INTENSITY;
 	lastRotated = ofGetElapsedTimeMillis();
+
+	weaponLevel = 1;
 }
 
 //--------------------------------------------------------------
@@ -130,16 +183,26 @@ void ofApp::update(){
 		(*it)->update();
 	}
 
-	//missileEmitter.rate = rateSlider;
-	missileEmitter.direction = directionSlider;
+	//mainMissileEmitter.rate = rateSlider;
+	//mainMissileEmitter.direction = directionSlider;
 	updateSprite();
 	checkTurretBounds();
 	missileSystem.update();
 	ofVec2f missileEmitterPosition;
 	missileEmitterPosition.x = turretSprite.trans.x + turretSprite.width / 2;
 	missileEmitterPosition.y = turretSprite.trans.y;
-	missileEmitter.setPosition(missileEmitterPosition);
-	missileEmitter.emit();
+	mainMissileEmitter.setPosition(missileEmitterPosition);
+	mainMissileEmitter.emit();
+
+	leftSideMissileEmitter.setPosition(missileEmitterPosition);
+	leftSideMissileEmitter.emit();
+	rightSideMissileEmitter.setPosition(missileEmitterPosition);
+	rightSideMissileEmitter.emit();
+	farLeftSideMissileEmitter.setPosition(missileEmitterPosition);
+	farLeftSideMissileEmitter.emit();
+	farRightSideMissileEmitter.setPosition(missileEmitterPosition);
+	farRightSideMissileEmitter.emit();
+
 
 	rateUpSystem.update();
 	damageUpSystem.update();
@@ -315,6 +378,14 @@ void ofApp::checkCollisions() {
 					particleEmitter->oneShot = true;
 					particleEmitter->start();
 					particleEmitters.push_back(particleEmitter);
+
+
+					int randomNum = rand() % 100;
+					if (randomNum <= WEAPON_UP_CHANCE) {
+						//Create rate-up power-up
+						weaponUpEmitter.setPosition(ofVec3f(it->trans.x, it->trans.y, 0));
+						weaponUpEmitter.emit();
+					}
 				}
 			}
 		}
@@ -350,7 +421,9 @@ void ofApp::checkCollisions() {
 		float vContactDistance = it->height / 2 + turretSprite.height / 2;
 		if (hDistance <= hContactDistance && vDistance <= vContactDistance) {
 			//Power-up received
-			missileEmitter.rate += RATE_UP_BONUS;
+			for (auto it = begin(missileEmitters); it != end(missileEmitters); it++) {
+				(*it)->rate += RATE_UP_BONUS;
+			}
 			it->lifespan = 0;
 		}
 	}
@@ -364,7 +437,9 @@ void ofApp::checkCollisions() {
 		float vContactDistance = it->height / 2 + turretSprite.height / 2;
 		if (hDistance <= hContactDistance && vDistance <= vContactDistance) {
 			//Power-up received
-			missileEmitter.sprite.damage += DAMAGE_UP_BONUS;
+			for (auto it = begin(missileEmitters); it != end(missileEmitters); it++) {
+				(*it)->sprite.damage += DAMAGE_UP_BONUS;
+			}
 			it->lifespan = 0;
 		}
 	}
@@ -378,6 +453,9 @@ void ofApp::checkCollisions() {
 		float vContactDistance = it->height / 2 + turretSprite.height / 2;
 		if (hDistance <= hContactDistance && vDistance <= vContactDistance) {
 			//Power-up received
+			if (weaponLevel < missileEmitters.size()) {
+				weaponLevel += WEAPON_UP_BONUS;
+			}
 			it->lifespan = 0;
 		}
 	}
@@ -484,9 +562,13 @@ void ofApp::checkTurretBounds() {
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
 	if (!idle) {
+		int i = 0;
 		switch (key) {
 			case ' ':
-				missileEmitter.start();
+				for (auto it = begin(missileEmitters); it != end(missileEmitters) && i < weaponLevel; it++) {
+					(*it)->start();
+					i++;
+				}
 				alienEmitter->start();
 				break;
 			case OF_KEY_RIGHT:
@@ -516,7 +598,9 @@ void ofApp::keyPressed(int key){
 void ofApp::keyReleased(int key){
 	switch (key) {
 		case ' ':
-			missileEmitter.stop();
+			for (auto it = begin(missileEmitters); it != end(missileEmitters); it++) {
+				(*it)->stop();
+			}
 			break;
 		case OF_KEY_LEFT:
 			leftPressed = false;

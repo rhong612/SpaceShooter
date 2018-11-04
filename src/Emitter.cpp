@@ -29,7 +29,7 @@ void Emitter::resizeImage(float width, float height) {
 
 void Emitter::emit() {
 	rateCounter++;
-	if (started && rateCounter >= MAX_RATE - rate) {
+	if (started && rateCounter > MAX_RATE - rate) {
 		sprite.width = sprite.image.getWidth();
 		sprite.height = sprite.image.getHeight();
 		sprite.trans.x = trans.x - sprite.width / 2;

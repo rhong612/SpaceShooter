@@ -113,7 +113,7 @@ class ofApp : public ofBaseApp{
 		static const int DAMAGE_UP_CHANCE = 5; //5%
 		static const int DAMAGE_UP_BONUS = 5;
 
-		static const int WEAPON_UP_CHANCE = 100; //100% for testing
+		static const int WEAPON_UP_CHANCE = 10; //10%
 		static const int WEAPON_UP_BONUS = 1;
 
 		bool idle;
@@ -127,7 +127,15 @@ class ofApp : public ofBaseApp{
 		MoveDir moveDir;
 
 		SpriteSystem missileSystem;
-		Emitter missileEmitter;
+		vector<Emitter*> missileEmitters;
+		Emitter mainMissileEmitter;
+
+		Emitter leftSideMissileEmitter;
+		Emitter rightSideMissileEmitter;
+		Emitter farLeftSideMissileEmitter;
+		Emitter farRightSideMissileEmitter;
+
+		float weaponLevel;
 
 		vector<Emitter*> enemyEmitters;
 		Emitter* alienEmitter;
