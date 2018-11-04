@@ -5,6 +5,8 @@
 void ofApp::setup(){
 	ofSetVerticalSync(true);
 
+	isGameOver = false;
+
 	destroySoundPlayer.load("sfx/destroy.wav");
 	powerUpSoundPlayer.load("sfx/power_up.wav");
 	damageSoundPlayer.load("sfx/damage.wav");
@@ -196,6 +198,11 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
+	checkGameOver();
+	if (isGameOver) {
+		return;
+	}
+
 	for (auto it = begin(particleEmitters); it != end(particleEmitters); it++) {
 		(*it)->update();
 	}
@@ -249,6 +256,12 @@ void ofApp::update(){
 	scaleEnemies();
 
 	healthBar.resize(ofGetWidth() * ((float) turretSprite.health / (float) TURRET_MAX_HEALTH), healthBar.getHeight());
+}
+
+void ofApp::checkGameOver() {
+	if (turretSprite.health <= 0) {
+		isGameOver = true;
+	}
 }
 
 void ofApp::randomizeMovement(SpriteSystem* sys) {
@@ -598,7 +611,7 @@ void ofApp::draw(){
 	if (idle) {
 		arialFont.drawString("Press spacebar to start!", ofGetWidth() / 2 - 200, ofGetHeight() / 2);
 	}
-	else {
+	else if (!isGameOver) {
 		panel.draw();
 		turretSprite.draw();
 		missileSystem.draw();
@@ -618,10 +631,13 @@ void ofApp::draw(){
 			(*it)->draw();
 		}
 		ofSetColor(255, 255, 255); //ParticleEmitter draw calls ofSetColor(...). Need to reverse the effect.
-		arialFont.drawString("Score:" + to_string(score), 0, ofGetHeight() / 15);
-		arialFont.drawString("Level:" + to_string(level), ofGetWidth() * 3/4, ofGetHeight() / 15);
-		arialFont.drawString("Health:" + to_string(turretSprite.health), ofGetWidth() * 1/3, ofGetHeight() - 50);
 	}
+	else {
+		arialFont.drawString("Game Over!", ofGetWidth() * 1/4, ofGetHeight() / 2);
+	}
+	arialFont.drawString("Score:" + to_string(score), 0, ofGetHeight() / 15);
+	arialFont.drawString("Level:" + to_string(level), ofGetWidth() * 3 / 4, ofGetHeight() / 15);
+	arialFont.drawString("Health:" + to_string(turretSprite.health), ofGetWidth() * 1 / 3, ofGetHeight() - 50);
 }
 
 void ofApp::checkTurretBounds() {

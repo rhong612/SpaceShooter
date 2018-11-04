@@ -95,6 +95,9 @@ class ofApp : public ofBaseApp{
 		void curveVelocity(SpriteSystem*, float);
 		bool collide(Sprite*, Sprite*);
 		bool collide(Sprite*, Particle*);
+		void checkGameOver();
+
+		bool isGameOver;
 
 		int score;
 		int level;
