@@ -119,6 +119,8 @@ class ofApp : public ofBaseApp{
 		static const int FIRST_AID_CHANCE = 20; //20%
 		static const int FIRST_AID_BONUS = 50;
 
+		static const int TURRET_MAX_HEALTH = 100;
+
 		bool idle;
 		bool leftPressed;
 		bool rightPressed;
@@ -175,4 +177,6 @@ class ofApp : public ofBaseApp{
 		ofxPanel panel;
 
 		ofTrueTypeFont arialFont;
+
+		ofImage healthBar;
 };

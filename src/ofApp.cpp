@@ -13,13 +13,17 @@ void ofApp::setup(){
 	turretSprite.trans.x = ofGetWidth() / 2 - turretSprite.width / 2;
 	turretSprite.trans.y = ofGetHeight() / 2 - turretSprite.height / 2;
 	turretSprite.damage = INT_MAX;
-	turretSprite.health = 100;
+	turretSprite.health = TURRET_MAX_HEALTH;
 	moveDir = MoveStop;
 	idle = true;
 	leftPressed = false;
 	rightPressed = false;
 	upPressed = false;
 	downPressed = false;
+
+	healthBar.loadImage("images/healthBar.png");
+	healthBar.resize(ofGetWidth(), healthBar.getHeight());
+
 	
 	mainMissileEmitter.sys = &missileSystem;
 	mainMissileEmitter.loadSpriteImage("images/missile.png");
@@ -236,6 +240,8 @@ void ofApp::update(){
 	checkCollisions();
 	checkLevel();
 	scaleEnemies();
+
+	healthBar.resize(ofGetWidth() * ((float) turretSprite.health / (float) TURRET_MAX_HEALTH), healthBar.getHeight());
 }
 
 void ofApp::randomizeMovement(SpriteSystem* sys) {
@@ -568,6 +574,7 @@ void ofApp::draw(){
 		damageUpSystem.draw();
 		weaponUpSystem.draw();
 		firstAidSystem.draw();
+		healthBar.draw(0, ofGetHeight() - healthBar.getHeight());
 		for (auto it = begin(particleEmitters); it != end(particleEmitters); it++) {
 			(*it)->draw();
 		}
