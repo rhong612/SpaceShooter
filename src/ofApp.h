@@ -29,7 +29,7 @@ public:
 	string name;
 	bool haveImage;
 	float width, height;
-	float health;
+	int health;
 	float damage;
 };
 
