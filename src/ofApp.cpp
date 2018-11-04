@@ -32,16 +32,15 @@ void ofApp::setup(){
 	healthBar.loadImage("images/healthBar.png");
 	healthBar.resize(ofGetWidth(), healthBar.getHeight());
 
+
+
+	missileEmitters.push_back(&mainMissileEmitter);
+	missileEmitters.push_back(&leftSideMissileEmitter);
+	missileEmitters.push_back(&rightSideMissileEmitter);
+	missileEmitters.push_back(&farLeftSideMissileEmitter);
+	missileEmitters.push_back(&farRightSideMissileEmitter);
+	initMissileEmitters();
 	
-	mainMissileEmitter.sys = &missileSystem;
-	mainMissileEmitter.loadSpriteImage("images/missile.png");
-	mainMissileEmitter.resizeImage(15, 15);
-	mainMissileEmitter.velocity = ofVec2f(0, -600);
-	mainMissileEmitter.lifespan = 3000;
-	ofVec2f missileEmitterPosition;
-	missileEmitterPosition.x = turretSprite.trans.x + turretSprite.width / 2;
-	missileEmitterPosition.y = turretSprite.trans.y;
-	mainMissileEmitter.setPosition(missileEmitterPosition);
 
 	panel.setup();
 	panel.add(rateSlider.setup("Main Missile Rate", 970, 0, 1000));
@@ -49,59 +48,6 @@ void ofApp::setup(){
 	panel.add(enemyRateSlider.setup("Enemy Rate", 990, 0, 1000));
 	panel.add(enemyLifespanSlider.setup("Enemy Lifespan", 7000, 0, 20000));
 	panel.add(enemyVelocitySlider.setup("Enemy Velocity", ofVec3f(0, 200, 0), ofVec3f(0, 0, 0), ofVec3f(0, 2000, 0)));
-	
-	mainMissileEmitter.direction = 180;
-	mainMissileEmitter.rate = 970;
-	mainMissileEmitter.sprite.health = 1;
-	mainMissileEmitter.sprite.damage = 10;
-
-	mainMissileEmitter.loadEmitSound("sfx/laser.wav");
-
-	leftSideMissileEmitter.sys = &missileSystem;
-	leftSideMissileEmitter.loadSpriteImage("images/missile.png");
-	leftSideMissileEmitter.resizeImage(15, 15);
-	leftSideMissileEmitter.velocity = ofVec2f(0, -600);
-	leftSideMissileEmitter.lifespan = 3000;
-	leftSideMissileEmitter.setPosition(missileEmitterPosition);
-	leftSideMissileEmitter.direction = 190;
-	leftSideMissileEmitter.rate = 970;
-	leftSideMissileEmitter.sprite.health = 1;
-	leftSideMissileEmitter.sprite.damage = 10;
-
-	farLeftSideMissileEmitter.sys = &missileSystem;
-	farLeftSideMissileEmitter.loadSpriteImage("images/missile.png");
-	farLeftSideMissileEmitter.resizeImage(15, 15);
-	farLeftSideMissileEmitter.velocity = ofVec2f(0, -600);
-	farLeftSideMissileEmitter.lifespan = 3000;
-	farLeftSideMissileEmitter.setPosition(missileEmitterPosition);
-	farLeftSideMissileEmitter.direction = 200;
-	farLeftSideMissileEmitter.rate = 970;
-	farLeftSideMissileEmitter.sprite.health = 1;
-	farLeftSideMissileEmitter.sprite.damage = 10;
-
-
-	rightSideMissileEmitter.sys = &missileSystem;
-	rightSideMissileEmitter.loadSpriteImage("images/missile.png");
-	rightSideMissileEmitter.resizeImage(15, 15);
-	rightSideMissileEmitter.velocity = ofVec2f(0, -600);
-	rightSideMissileEmitter.lifespan = 3000;
-	rightSideMissileEmitter.setPosition(missileEmitterPosition);
-	rightSideMissileEmitter.direction = 170;
-	rightSideMissileEmitter.rate = 970;
-	rightSideMissileEmitter.sprite.health = 1;
-	rightSideMissileEmitter.sprite.damage = 10;
-
-	farRightSideMissileEmitter.sys = &missileSystem;
-	farRightSideMissileEmitter.loadSpriteImage("images/missile.png");
-	farRightSideMissileEmitter.resizeImage(15, 15);
-	farRightSideMissileEmitter.velocity = ofVec2f(0, -600);
-	farRightSideMissileEmitter.lifespan = 3000;
-	farRightSideMissileEmitter.setPosition(missileEmitterPosition);
-	farRightSideMissileEmitter.direction = 160;
-	farRightSideMissileEmitter.rate = 970;
-	farRightSideMissileEmitter.sprite.health = 1;
-	farRightSideMissileEmitter.sprite.damage = 10;
-
 
 	rateUpEmitter.sys = &rateUpSystem;
 	rateUpEmitter.loadSpriteImage("images/rateUpPowerUp.png");
@@ -183,12 +129,6 @@ void ofApp::setup(){
 	enemyEmitters.push_back(zombieEmitter);
 	enemyEmitters.push_back(blueZombieEmitter);
 
-	missileEmitters.push_back(&mainMissileEmitter);
-	missileEmitters.push_back(&leftSideMissileEmitter);
-	missileEmitters.push_back(&rightSideMissileEmitter);
-	missileEmitters.push_back(&farLeftSideMissileEmitter);
-	missileEmitters.push_back(&farRightSideMissileEmitter);
-
 
 	score = 0;
 	level = 1;
@@ -196,6 +136,30 @@ void ofApp::setup(){
 	lastRotated = ofGetElapsedTimeMillis();
 
 	weaponLevel = 1;
+}
+
+void ofApp::initMissileEmitters() {
+	int i = 0;
+	float directions[5] = { 180, 170, 190, 160, 200 };
+	ofVec2f missileEmitterPosition;
+	missileEmitterPosition.x = turretSprite.trans.x + turretSprite.width / 2;
+	missileEmitterPosition.y = turretSprite.trans.y;
+	for (auto it = begin(missileEmitters); it != end(missileEmitters); it++) {
+		(*it)->sys = &missileSystem;
+		(*it)->loadSpriteImage("images/missile.png");
+		(*it)->resizeImage(15, 15);
+		(*it)->velocity = ofVec2f(0, -600);
+		(*it)->lifespan = 3000;
+		(*it)->setPosition(missileEmitterPosition);
+		(*it)->direction = directions[i];
+		(*it)->rate = 970;
+		(*it)->sprite.health = 1;
+		(*it)->sprite.damage = 10;
+		if (i == 0) {
+			(*it)->loadEmitSound("sfx/laser.wav");
+		}
+		i++;
+	}
 }
 
 //--------------------------------------------------------------
@@ -334,7 +298,7 @@ void ofApp::checkCollisions() {
 					score++;
 					destroySoundPlayer.play();
 
-					//Create explosion effect
+					//Create explosion effect. No collision detection needed.
 					ParticleEmitter* explosionEffectEmitter = new ParticleEmitter();
 					explosionEffectEmitter->setLifespan(0.5);
 					explosionEffectEmitter->setParticleRadius(1.0);
@@ -389,6 +353,7 @@ void ofApp::checkCollisions() {
 				if (zombieDied) {
 					destroySoundPlayer.play();
 					score += 5;
+
 					//Create death explosion effect
 					ParticleEmitter* particleEmitter = new ParticleEmitter();
 					particleEmitter->setLifespan(3);
@@ -469,9 +434,9 @@ void ofApp::checkCollisions() {
 		}
 	}
 
+	//Check for contact between explosion particles and player turret
 	for (auto it = begin(particleEmitters); it != end(particleEmitters); it++) {
 		for (auto part = begin((*it)->sys->particles); part != end((*it)->sys->particles); part++) {
-			//Enemy explosion particle contact with player turret
 			float hDistance = abs((part->position.x + part->radius) - (turretSprite.trans.x + turretSprite.width / 2));
 			float vDistance = abs((part->position.y + part->radius) - (turretSprite.trans.y + turretSprite.height / 2));
 			float hContactDistance = part->radius + turretSprite.width / 2;

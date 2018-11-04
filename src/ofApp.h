@@ -96,6 +96,7 @@ class ofApp : public ofBaseApp{
 		bool collide(Sprite*, Sprite*);
 		bool collide(Sprite*, Particle*);
 		void checkGameOver();
+		void initMissileEmitters();
 
 		bool slidersActive;
 
