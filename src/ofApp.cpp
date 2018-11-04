@@ -637,7 +637,7 @@ void ofApp::draw(){
 		arialFont.drawString("Game Over!", ofGetWidth() * 1/4, ofGetHeight() / 2);
 	}
 	arialFont.drawString("Score:" + to_string(score), 0, ofGetHeight() / 15);
-	arialFont.drawString("Level:" + to_string(level), ofGetWidth() * 3 / 4, ofGetHeight() / 15);
+	arialFont.drawString("Level:" + to_string(level), 0, ofGetHeight() / 9);
 	arialFont.drawString("Health:" + to_string(turretSprite.health), ofGetWidth() * 1 / 3, ofGetHeight() - 50);
 }
 
