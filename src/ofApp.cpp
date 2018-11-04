@@ -7,6 +7,7 @@ void ofApp::setup(){
 
 	destroySoundPlayer.load("sfx/destroy.wav");
 	powerUpSoundPlayer.load("sfx/power_up.wav");
+	damageSoundPlayer.load("sfx/damage.wav");
 
 	arialFont.load("fonts/arial.ttf", 32);
 	turretSprite.image.loadImage("images/sprite.png");
@@ -353,6 +354,7 @@ void ofApp::checkCollisions() {
 		float vContactDistance = it->height / 2 + turretSprite.height / 2;
 		if (hDistance <= hContactDistance && vDistance <= vContactDistance) {
 			collide(&turretSprite, &*it);
+			damageSoundPlayer.play();
 		}
 	}
 
@@ -400,6 +402,7 @@ void ofApp::checkCollisions() {
 		float vContactDistance = it->height / 2 + turretSprite.height / 2;
 		if (hDistance <= hContactDistance && vDistance <= vContactDistance) {
 			collide(&turretSprite, &*it);
+			damageSoundPlayer.play();
 		}
 	}
 
@@ -445,6 +448,7 @@ void ofApp::checkCollisions() {
 		float vContactDistance = it->height / 2 + turretSprite.height / 2;
 		if (hDistance <= hContactDistance && vDistance <= vContactDistance) {
 			collide(&turretSprite, &*it);
+			damageSoundPlayer.play();
 		}
 	}
 
@@ -457,6 +461,7 @@ void ofApp::checkCollisions() {
 			float vContactDistance = part->radius / 2 + turretSprite.height / 2;
 			if (hDistance <= hContactDistance && vDistance <= vContactDistance) {
 				collide(&turretSprite, &*part);
+				damageSoundPlayer.play();
 			}
 		}
 	}

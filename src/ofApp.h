@@ -187,4 +187,5 @@ class ofApp : public ofBaseApp{
 
 		ofSoundPlayer powerUpSoundPlayer;
 		ofSoundPlayer destroySoundPlayer;
+		ofSoundPlayer damageSoundPlayer;
 };
