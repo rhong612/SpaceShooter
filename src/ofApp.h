@@ -116,6 +116,9 @@ class ofApp : public ofBaseApp{
 		static const int WEAPON_UP_CHANCE = 10; //10%
 		static const int WEAPON_UP_BONUS = 1;
 
+		static const int FIRST_AID_CHANCE = 20; //20%
+		static const int FIRST_AID_BONUS = 50;
+
 		bool idle;
 		bool leftPressed;
 		bool rightPressed;
@@ -157,6 +160,9 @@ class ofApp : public ofBaseApp{
 
 		Emitter weaponUpEmitter;
 		SpriteSystem weaponUpSystem;
+
+		Emitter firstAidEmitter;
+		SpriteSystem firstAidSystem;
 
 		
 		ofxFloatSlider rateSlider;

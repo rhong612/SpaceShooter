@@ -118,6 +118,15 @@ void ofApp::setup(){
 	weaponUpEmitter.rate = Emitter::MAX_RATE; //Fire every time emit() is called
 	weaponUpEmitter.start();
 
+	firstAidEmitter.sys = &firstAidSystem;
+	firstAidEmitter.loadSpriteImage("images/firstAid.png");
+	firstAidEmitter.resizeImage(25, 25);
+	firstAidEmitter.velocity = ofVec3f(0, 200, 0);
+	firstAidEmitter.lifespan = 20000;
+	firstAidEmitter.direction = 180;
+	firstAidEmitter.rate = Emitter::MAX_RATE; //Fire every time emit() is called
+	firstAidEmitter.start();
+
 	//Setup Alien Emitter
 	alienEmitter = new Emitter();
 	alienEmitter->sys = &alienEnemySystem;
@@ -207,6 +216,7 @@ void ofApp::update(){
 	rateUpSystem.update();
 	damageUpSystem.update();
 	weaponUpSystem.update();
+	firstAidSystem.update();
 
 	curveVelocity(&alienEnemySystem, currentAlienCurveIntensity);
 	randomizeMovement(&blueZombieEnemySystem);
@@ -299,6 +309,14 @@ void ofApp::checkCollisions() {
 						damageUpEmitter.setPosition(ofVec3f(it->trans.x, it->trans.y, 0));
 						damageUpEmitter.emit();
 					}
+					else {
+						randomNum = rand() % 100; //reroll for first aid item
+						if (randomNum <= FIRST_AID_CHANCE) {
+							firstAidEmitter.setPosition(ofVec3f(it->trans.x, it->trans.y, 0));
+							firstAidEmitter.emit();
+						}
+					}
+
 				}
 			}
 		}
@@ -311,6 +329,7 @@ void ofApp::checkCollisions() {
 			collide(&turretSprite, &*it);
 		}
 	}
+
 	//Zombie Collisions
 	for (vector<Sprite>::iterator it = zombieEnemySystem.sprites.begin(); it != zombieEnemySystem.sprites.end(); it++) {
 		//Contact with player missile
@@ -459,6 +478,20 @@ void ofApp::checkCollisions() {
 			it->lifespan = 0;
 		}
 	}
+
+	//First-aid collisions
+	for (vector<Sprite>::iterator it = firstAidSystem.sprites.begin(); it != firstAidSystem.sprites.end(); it++) {
+		//Contact with turret
+		float hDistance = abs((it->trans.x + it->width / 2) - (turretSprite.trans.x + turretSprite.width / 2));
+		float vDistance = abs((it->trans.y + it->height / 2) - (turretSprite.trans.y + turretSprite.height / 2));
+		float hContactDistance = it->width / 2 + turretSprite.width / 2;
+		float vContactDistance = it->height / 2 + turretSprite.height / 2;
+		if (hDistance <= hContactDistance && vDistance <= vContactDistance) {
+			//Healing received
+			turretSprite.health = turretSprite.health + 50 > 100 ? 100 : turretSprite.health + 50;
+			it->lifespan = 0;
+		}
+	}
 }
 
 
@@ -534,6 +567,7 @@ void ofApp::draw(){
 		rateUpSystem.draw();
 		damageUpSystem.draw();
 		weaponUpSystem.draw();
+		firstAidSystem.draw();
 		for (auto it = begin(particleEmitters); it != end(particleEmitters); it++) {
 			(*it)->draw();
 		}
