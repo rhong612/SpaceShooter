@@ -41,4 +41,5 @@ public:
 	int groupSize;      // number of particles to spawn in a group
 	bool createdSys;
 	EmitterType type;
+	ofColor color;
 };

@@ -40,6 +40,7 @@ void ParticleEmitter::init() {
 	visible = true;
 	type = DirectionalEmitter;
 	groupSize = 1;
+	color = ofColor::red;
 }
 
 
@@ -104,6 +105,7 @@ void ParticleEmitter::update() {
 void ParticleEmitter::spawn(float time) {
 
 	Particle particle;
+	particle.color = color;
 
 	// set initial velocity and position
 	// based on emitter type

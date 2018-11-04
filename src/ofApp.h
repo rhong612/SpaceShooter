@@ -152,6 +152,8 @@ class ofApp : public ofBaseApp{
 
 		vector<ParticleEmitter*> particleEmitters;
 
+		vector<ParticleEmitter*> explosionEffectEmitters;
+
 		Emitter rateUpEmitter;
 		SpriteSystem rateUpSystem;
 

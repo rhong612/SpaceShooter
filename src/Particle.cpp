@@ -14,13 +14,13 @@ Particle::Particle() {
 	radius = .1;
 	damping = .99;
 	mass = 1;
-	color = ofColor::aquamarine;
+	color = ofColor::red;
 	damage = 10;
 }
 
 void Particle::draw() {
-//	ofSetColor(color);
-	ofSetColor(ofMap(age(), 0, lifespan, 255, 10), 0, 0);
+	ofSetColor(color);
+	//ofSetColor(ofMap(age(), 0, lifespan, 255, 10), 0, 0);
 	ofDrawSphere(position, radius);
 }
 

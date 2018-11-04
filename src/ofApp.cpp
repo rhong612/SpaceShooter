@@ -195,6 +195,9 @@ void ofApp::update(){
 	for (auto it = begin(particleEmitters); it != end(particleEmitters); it++) {
 		(*it)->update();
 	}
+	for (auto it = begin(explosionEffectEmitters); it != end(explosionEffectEmitters); it++) {
+		(*it)->update();
+	}
 
 	//mainMissileEmitter.rate = rateSlider;
 	//mainMissileEmitter.direction = directionSlider;
@@ -309,6 +312,19 @@ void ofApp::checkCollisions() {
 				if (alienDied) {
 					score++;
 
+					//Create explosion effect
+					ParticleEmitter* explosionEffectEmitter = new ParticleEmitter();
+					explosionEffectEmitter->setLifespan(0.5);
+					explosionEffectEmitter->setParticleRadius(1.0);
+					explosionEffectEmitter->setVelocity(ofVec3f(0, 0, 0));
+					explosionEffectEmitter->sys->addForce(new ImpulseRadialForce(3000.0));
+					explosionEffectEmitter->position = ofVec3f(it->trans.x + it->width / 2.0, it->trans.y + it->height / 2.0, 0);
+					explosionEffectEmitter->groupSize = 100;
+					explosionEffectEmitter->oneShot = true;
+					explosionEffectEmitter->color = ofColor::blue;
+					explosionEffectEmitter->start();
+					explosionEffectEmitters.push_back(explosionEffectEmitter);
+
 					int randomNum = rand() % 100;
 					if (randomNum <= DAMAGE_UP_CHANCE) {
 						//Create damage-up power-up
@@ -349,17 +365,19 @@ void ofApp::checkCollisions() {
 
 				if (zombieDied) {
 					score += 5;
-					//Create explosion effect
+					//Create death explosion effect
 					ParticleEmitter* particleEmitter = new ParticleEmitter();
 					particleEmitter->setLifespan(3);
-					particleEmitter->setParticleRadius(7.0);
+					particleEmitter->setParticleRadius(5.0);
 					particleEmitter->setVelocity(ofVec3f(0, 0, 0));
 					particleEmitter->sys->addForce(new ImpulseRadialForce(40000.0));
-					particleEmitter->position = it->trans;
+					particleEmitter->position = ofVec3f(it->trans.x + it->width / 2.0, it->trans.y + it->height / 2.0, 0);
 					particleEmitter->groupSize = 10;
 					particleEmitter->oneShot = true;
 					particleEmitter->start();
 					particleEmitters.push_back(particleEmitter);
+
+
 
 					int randomNum = rand() % 100;
 					if (randomNum <= RATE_UP_CHANCE) {
@@ -392,13 +410,13 @@ void ofApp::checkCollisions() {
 				bool zombieDied = collide(&*it, &*missileIter);
 				if (zombieDied) {
 					score += 20;
-					//Create explosion effect
+					//Create death explosion effect
 					ParticleEmitter* particleEmitter = new ParticleEmitter();
 					particleEmitter->setLifespan(3);
-					particleEmitter->setParticleRadius(7.0);
+					particleEmitter->setParticleRadius(5.0);
 					particleEmitter->setVelocity(ofVec3f(0, 0, 0));
 					particleEmitter->sys->addForce(new ImpulseRadialForce(40000.0));
-					particleEmitter->position = it->trans;
+					particleEmitter->position = ofVec3f(it->trans.x + it->width / 2.0, it->trans.y + it->height / 2.0, 0);
 					particleEmitter->groupSize = 30;
 					particleEmitter->oneShot = true;
 					particleEmitter->start();
@@ -578,7 +596,11 @@ void ofApp::draw(){
 		for (auto it = begin(particleEmitters); it != end(particleEmitters); it++) {
 			(*it)->draw();
 		}
-		ofSetColor(255, 255, 255); //ParticleEmitter draw calls ofSetColor(red). Need to reverse the effect.
+
+		for (auto it = begin(explosionEffectEmitters); it != end(explosionEffectEmitters); it++) {
+			(*it)->draw();
+		}
+		ofSetColor(255, 255, 255); //ParticleEmitter draw calls ofSetColor(...). Need to reverse the effect.
 		arialFont.drawString("Score:" + to_string(score), ofGetWidth() / 5, ofGetHeight() / 10);
 		arialFont.drawString("Level:" + to_string(level), ofGetWidth() * 3/4, ofGetHeight() / 10);
 		arialFont.drawString("Health:" + to_string(turretSprite.health), ofGetWidth() / 2, ofGetHeight() - 50);
