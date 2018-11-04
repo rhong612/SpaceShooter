@@ -266,8 +266,8 @@ void ofApp::randomizeMovement(SpriteSystem* sys) {
 }
 
 void ofApp::checkLevel() {
-	if (level == 3) {
-		level = score / 30 + 3; //Increase level every 30 points after level 3
+	if (level >= 3) {
+		level = (score / 30) + 3; //Increase level every 30 points after level 3
 	}
 	else if (level == 2 && score >= LEVEL_THREE_REQUIREMENT) {
 		level = 3;
