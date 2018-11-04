@@ -39,11 +39,22 @@ void ofApp::setup(){
 	panel.add(enemyVelocitySlider.setup("enemy velocity", ofVec3f(0, 200, 0), ofVec3f(0, 0, 0), ofVec3f(0, 2000, 0)));
 	
 	missileEmitter.direction = directionSlider;
-	missileEmitter.rate = rateSlider;
+	missileEmitter.rate = 970;
 	missileEmitter.sprite.health = 1;
 	missileEmitter.sprite.damage = 10;
 
 	missileEmitter.loadEmitSound("sfx/laser.wav");
+
+
+	rateUpEmitter.sys = &rateUpSystem;
+	rateUpEmitter.loadSpriteImage("images/rateUpPowerUp.png");
+	rateUpEmitter.resizeImage(25, 25);
+	rateUpEmitter.velocity = ofVec3f(0, 200, 0);
+	rateUpEmitter.lifespan = 20000;
+	rateUpEmitter.direction = 180;
+	rateUpEmitter.rate = Emitter::MAX_RATE; //Fire every time emit() is called
+	rateUpEmitter.start();
+
 
 	//Setup Alien Emitter
 	alienEmitter = new Emitter();
@@ -102,7 +113,7 @@ void ofApp::update(){
 		(*it)->update();
 	}
 
-	missileEmitter.rate = rateSlider;
+	//missileEmitter.rate = rateSlider;
 	missileEmitter.direction = directionSlider;
 	updateSprite();
 	checkTurretBounds();
@@ -112,6 +123,8 @@ void ofApp::update(){
 	missileEmitterPosition.y = turretSprite.trans.y;
 	missileEmitter.setPosition(missileEmitterPosition);
 	missileEmitter.emit();
+
+	rateUpSystem.update();
 
 	curveVelocity(&alienEnemySystem, currentAlienCurveIntensity);
 	randomizeMovement(&blueZombieEnemySystem);
@@ -233,6 +246,13 @@ void ofApp::checkCollisions() {
 					particleEmitter->oneShot = true;
 					particleEmitter->start();
 					particleEmitters.push_back(particleEmitter);
+
+					int randomNum = rand() % 100;
+					if (randomNum <= RATE_UP_CHANCE) {
+						//Create power-up
+						rateUpEmitter.setPosition(ofVec3f(it->trans.x, it->trans.y, 0));
+						rateUpEmitter.emit();
+					}
 				}
 			}
 		}
@@ -292,6 +312,20 @@ void ofApp::checkCollisions() {
 			if (hDistance <= hContactDistance && vDistance <= vContactDistance) {
 				collide(&turretSprite, &*part);
 			}
+		}
+	}
+
+	//Rate Up Power-up collisions
+	for (vector<Sprite>::iterator it = rateUpSystem.sprites.begin(); it != rateUpSystem.sprites.end(); it++) {
+		//Contact with turret
+		float hDistance = abs((it->trans.x + it->width / 2) - (turretSprite.trans.x + turretSprite.width / 2));
+		float vDistance = abs((it->trans.y + it->height / 2) - (turretSprite.trans.y + turretSprite.height / 2));
+		float hContactDistance = it->width / 2 + turretSprite.width / 2;
+		float vContactDistance = it->height / 2 + turretSprite.height / 2;
+		if (hDistance <= hContactDistance && vDistance <= vContactDistance) {
+			//Power-up received
+			missileEmitter.rate += RATE_UP_BONUS;
+			it->lifespan = 0;
 		}
 	}
 }
@@ -361,12 +395,12 @@ void ofApp::draw(){
 	}
 	else {
 		panel.draw();
-		ofSetColor(255, 255, 255); //When a particle is drawn, it calls ofSetColor(red);
 		turretSprite.draw();
 		missileSystem.draw();
 		alienEnemySystem.draw();
 		zombieEnemySystem.draw();
 		blueZombieEnemySystem.draw();
+		rateUpSystem.draw();
 		for (auto it = begin(particleEmitters); it != end(particleEmitters); it++) {
 			(*it)->draw();
 		}

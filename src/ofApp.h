@@ -107,6 +107,9 @@ class ofApp : public ofBaseApp{
 		static const int INITIAL_ZOMBIE_Y_VELOCITY = 50; 
 		static const int INITIAL_BLUE_ZOMBIE_Y_VELOCITY = 100;
 
+		static const int RATE_UP_CHANCE = 20; //20%
+		static const int RATE_UP_BONUS = 5;
+
 		bool idle;
 		bool leftPressed;
 		bool rightPressed;
@@ -129,6 +132,9 @@ class ofApp : public ofBaseApp{
 		SpriteSystem blueZombieEnemySystem;
 
 		vector<ParticleEmitter*> particleEmitters;
+
+		Emitter rateUpEmitter;
+		SpriteSystem rateUpSystem;
 
 		
 		ofxFloatSlider rateSlider;
