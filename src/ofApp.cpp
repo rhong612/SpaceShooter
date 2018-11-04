@@ -601,9 +601,9 @@ void ofApp::draw(){
 			(*it)->draw();
 		}
 		ofSetColor(255, 255, 255); //ParticleEmitter draw calls ofSetColor(...). Need to reverse the effect.
-		arialFont.drawString("Score:" + to_string(score), ofGetWidth() / 5, ofGetHeight() / 10);
-		arialFont.drawString("Level:" + to_string(level), ofGetWidth() * 3/4, ofGetHeight() / 10);
-		arialFont.drawString("Health:" + to_string(turretSprite.health), ofGetWidth() / 2, ofGetHeight() - 50);
+		arialFont.drawString("Score:" + to_string(score), 0, ofGetHeight() / 15);
+		arialFont.drawString("Level:" + to_string(level), ofGetWidth() * 3/4, ofGetHeight() / 15);
+		arialFont.drawString("Health:" + to_string(turretSprite.health), ofGetWidth() * 1/3, ofGetHeight() - 50);
 	}
 }
 
