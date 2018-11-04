@@ -617,8 +617,8 @@ void ofApp::checkTurretBounds() {
 	if (turretSprite.trans.y < 0) {
 		turretSprite.trans.y = 0;
 	}
-	else if (turretSprite.trans.y > ofGetHeight() - turretSprite.image.getHeight()) {
-		turretSprite.trans.y = ofGetHeight() - turretSprite.image.getHeight();
+	else if (turretSprite.trans.y > ofGetHeight() - turretSprite.image.getHeight() - healthBar.getHeight()) {
+		turretSprite.trans.y = ofGetHeight() - turretSprite.image.getHeight() - healthBar.getHeight();
 	}
 }
 
