@@ -55,6 +55,23 @@ void ofApp::setup(){
 	rateUpEmitter.rate = Emitter::MAX_RATE; //Fire every time emit() is called
 	rateUpEmitter.start();
 
+	damageUpEmitter.sys = &damageUpSystem;
+	damageUpEmitter.loadSpriteImage("images/damageUpPowerUp.png");
+	damageUpEmitter.resizeImage(25, 25);
+	damageUpEmitter.velocity = ofVec3f(0, 200, 0);
+	damageUpEmitter.lifespan = 20000;
+	damageUpEmitter.direction = 180;
+	damageUpEmitter.rate = Emitter::MAX_RATE; //Fire every time emit() is called
+	damageUpEmitter.start();
+
+	weaponUpEmitter.sys = &weaponUpSystem;
+	weaponUpEmitter.loadSpriteImage("images/weaponUpPowerUp.png");
+	weaponUpEmitter.resizeImage(25, 25);
+	weaponUpEmitter.velocity = ofVec3f(0, 200, 0);
+	weaponUpEmitter.lifespan = 20000;
+	weaponUpEmitter.direction = 180;
+	weaponUpEmitter.rate = Emitter::MAX_RATE; //Fire every time emit() is called
+	weaponUpEmitter.start();
 
 	//Setup Alien Emitter
 	alienEmitter = new Emitter();
@@ -125,6 +142,8 @@ void ofApp::update(){
 	missileEmitter.emit();
 
 	rateUpSystem.update();
+	damageUpSystem.update();
+	weaponUpSystem.update();
 
 	curveVelocity(&alienEnemySystem, currentAlienCurveIntensity);
 	randomizeMovement(&blueZombieEnemySystem);
@@ -210,6 +229,13 @@ void ofApp::checkCollisions() {
 				bool alienDied = collide(&*it, &*missileIter);
 				if (alienDied) {
 					score++;
+
+					int randomNum = rand() % 100;
+					if (randomNum <= DAMAGE_UP_CHANCE) {
+						//Create damage-up power-up
+						damageUpEmitter.setPosition(ofVec3f(it->trans.x, it->trans.y, 0));
+						damageUpEmitter.emit();
+					}
 				}
 			}
 		}
@@ -249,7 +275,7 @@ void ofApp::checkCollisions() {
 
 					int randomNum = rand() % 100;
 					if (randomNum <= RATE_UP_CHANCE) {
-						//Create power-up
+						//Create rate-up power-up
 						rateUpEmitter.setPosition(ofVec3f(it->trans.x, it->trans.y, 0));
 						rateUpEmitter.emit();
 					}
@@ -328,6 +354,33 @@ void ofApp::checkCollisions() {
 			it->lifespan = 0;
 		}
 	}
+
+	//Damage Up Power-up collisions
+	for (vector<Sprite>::iterator it = damageUpSystem.sprites.begin(); it != damageUpSystem.sprites.end(); it++) {
+		//Contact with turret
+		float hDistance = abs((it->trans.x + it->width / 2) - (turretSprite.trans.x + turretSprite.width / 2));
+		float vDistance = abs((it->trans.y + it->height / 2) - (turretSprite.trans.y + turretSprite.height / 2));
+		float hContactDistance = it->width / 2 + turretSprite.width / 2;
+		float vContactDistance = it->height / 2 + turretSprite.height / 2;
+		if (hDistance <= hContactDistance && vDistance <= vContactDistance) {
+			//Power-up received
+			missileEmitter.sprite.damage += DAMAGE_UP_BONUS;
+			it->lifespan = 0;
+		}
+	}
+
+	//Weapon Up Power-up collisions
+	for (vector<Sprite>::iterator it = weaponUpSystem.sprites.begin(); it != weaponUpSystem.sprites.end(); it++) {
+		//Contact with turret
+		float hDistance = abs((it->trans.x + it->width / 2) - (turretSprite.trans.x + turretSprite.width / 2));
+		float vDistance = abs((it->trans.y + it->height / 2) - (turretSprite.trans.y + turretSprite.height / 2));
+		float hContactDistance = it->width / 2 + turretSprite.width / 2;
+		float vContactDistance = it->height / 2 + turretSprite.height / 2;
+		if (hDistance <= hContactDistance && vDistance <= vContactDistance) {
+			//Power-up received
+			it->lifespan = 0;
+		}
+	}
 }
 
 
@@ -401,6 +454,8 @@ void ofApp::draw(){
 		zombieEnemySystem.draw();
 		blueZombieEnemySystem.draw();
 		rateUpSystem.draw();
+		damageUpSystem.draw();
+		weaponUpSystem.draw();
 		for (auto it = begin(particleEmitters); it != end(particleEmitters); it++) {
 			(*it)->draw();
 		}

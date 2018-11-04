@@ -110,6 +110,12 @@ class ofApp : public ofBaseApp{
 		static const int RATE_UP_CHANCE = 20; //20%
 		static const int RATE_UP_BONUS = 5;
 
+		static const int DAMAGE_UP_CHANCE = 5; //5%
+		static const int DAMAGE_UP_BONUS = 5;
+
+		static const int WEAPON_UP_CHANCE = 100; //100% for testing
+		static const int WEAPON_UP_BONUS = 1;
+
 		bool idle;
 		bool leftPressed;
 		bool rightPressed;
@@ -135,6 +141,14 @@ class ofApp : public ofBaseApp{
 
 		Emitter rateUpEmitter;
 		SpriteSystem rateUpSystem;
+
+
+		Emitter damageUpEmitter;
+		SpriteSystem damageUpSystem;
+
+
+		Emitter weaponUpEmitter;
+		SpriteSystem weaponUpSystem;
 
 		
 		ofxFloatSlider rateSlider;
