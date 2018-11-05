@@ -40,7 +40,7 @@ void ofApp::setup(){
 	downPressed = false;
 	isGameOver = false;
 	slidersActive = false;
-	score = 0;
+	score = 599;
 	level = 1;
 	lastRotated = ofGetElapsedTimeMillis();
 	currentAlienCurveIntensity = INITIAL_ALIEN_CURVE_INTENSITY;
@@ -66,7 +66,7 @@ void ofApp::initEnemyEmitters() {
 	alienEmitter->direction = 180;
 	alienEmitter->rate = 900;
 	alienEmitter->setPosition(ofVec2f(rand() % ofGetWidth(), 0));
-	alienEmitter->sprite.damage = 20;
+	alienEmitter->sprite.damage = 10;
 	alienEmitter->sprite.health = 10;
 
 	//Setup Zombie Emitter
@@ -80,7 +80,7 @@ void ofApp::initEnemyEmitters() {
 	zombieEmitter->rate = 600;
 	zombieEmitter->setPosition(ofVec2f(rand() % ofGetWidth(), 0));
 	zombieEmitter->sprite.damage = 20;
-	zombieEmitter->sprite.health = 20;
+	zombieEmitter->sprite.health = 30;
 
 	//Setup Bug Emitter;
 	bugEmitter = new Emitter();
@@ -92,8 +92,8 @@ void ofApp::initEnemyEmitters() {
 	bugEmitter->direction = 180;
 	bugEmitter->rate = 700;
 	bugEmitter->setPosition(ofVec2f(rand() % ofGetWidth(), 0));
-	bugEmitter->sprite.damage = 30;
-	bugEmitter->sprite.health = 30;
+	bugEmitter->sprite.damage = 20;
+	bugEmitter->sprite.health = 20;
 
 	enemyEmitters.push_back(alienEmitter);
 	enemyEmitters.push_back(zombieEmitter);
@@ -291,11 +291,11 @@ void ofApp::checkLevel() {
 	}
 	else if (level == 2 && score >= LEVEL_THREE_REQUIREMENT) {
 		level = 3;
-		bugEmitter->start(); //Bugs start appearing at level 3
+		zombieEmitter->start(); //Zombies start appearing at level 3
 	}
 	else if (level == 1 && score >= LEVEL_TWO_REQUIREMENT) {
 		level = 2;
-		zombieEmitter->start(); //Normal zombies start appearing at level 2
+		bugEmitter->start(); //Bugs start appearing at level 2
 	}
 }
 
@@ -303,9 +303,22 @@ void ofApp::checkLevel() {
 //
 void ofApp::scaleEnemies() {
 	//Increase enemy spawn rate based on level
-	alienEmitter->rate = level * 5 + 900 > MAX_ALIEN_RATE ? MAX_ALIEN_RATE : level * 5 + 900;
-	zombieEmitter->rate = level * 5 + 600 > MAX_ZOMBIE_RATE ? MAX_ZOMBIE_RATE : level * 5 + 600;
-	bugEmitter->rate = level * 5 + 500 > MAX_BUG_RATE ? MAX_BUG_RATE : level * 5 + 500;
+	if (level <= 15) {
+		alienEmitter->rate = level * 6 + 900 > MAX_ALIEN_RATE ? MAX_ALIEN_RATE : level * 5 + 900;
+		zombieEmitter->rate = level * 5 + 600 > MAX_ZOMBIE_RATE ? MAX_ZOMBIE_RATE : level * 5 + 600;
+		bugEmitter->rate = level * 5 + 500 > MAX_BUG_RATE ? MAX_BUG_RATE : level * 5 + 500;
+	}
+	//If over lvl 15, stop spawning aliens
+	else if (level <= 25){
+		alienEmitter->stop();
+		zombieEmitter->rate = level * 6 + 600 > MAX_ZOMBIE_RATE ? MAX_ZOMBIE_RATE : level * 6 + 600;
+		bugEmitter->rate = level * 5 + 900 > MAX_BUG_RATE ? MAX_BUG_RATE : level * 5 + 900;
+	}
+	//If over lvl 25, stop spawning bugs
+	else if (level <= 35) {
+		bugEmitter->stop();
+		zombieEmitter->rate = level * 6 + 700 > MAX_ZOMBIE_RATE ? MAX_ZOMBIE_RATE : level * 6 + 700;
+	}
 
 	//Alien: Increase curve intensity
 	//Zombie: Increase velocity
@@ -396,7 +409,7 @@ void ofApp::checkCollisions() {
 
 				if (zombieDied) {
 					destroySoundPlayer.play();
-					score += 5;
+					score += 20;
 
 					//Create death explosion effect
 					ParticleEmitter* particleEmitter = new ParticleEmitter();
@@ -410,13 +423,18 @@ void ofApp::checkCollisions() {
 					particleEmitter->start();
 					collisionfulEffectEmitters.push_back(particleEmitter);
 
-
-
 					int randomNum = rand() % 100;
 					if (randomNum <= RATE_UP_CHANCE) {
 						//Create rate-up power-up
 						rateUpEmitter.setPosition(ofVec3f(it->trans.x, it->trans.y, 0));
 						rateUpEmitter.emit();
+					}
+					else {
+						randomNum = rand() % 100; //reroll for first aid item
+						if (randomNum <= FIRST_AID_CHANCE) {
+							firstAidEmitter.setPosition(ofVec3f(it->trans.x, it->trans.y, 0));
+							firstAidEmitter.emit();
+						}
 					}
 				}
 			}
@@ -444,7 +462,7 @@ void ofApp::checkCollisions() {
 				bool zombieDied = collide(&*it, &*missileIter);
 				if (zombieDied) {
 					destroySoundPlayer.play();
-					score += 20;
+					score += 10;
 
 					//Create explosion effect. No collision detection needed.
 					ParticleEmitter* explosionEffectEmitter = new ParticleEmitter();
@@ -692,7 +710,6 @@ void ofApp::keyPressed(int key){
 					(*it)->start();
 					i++;
 				}
-				alienEmitter->start();
 				break;
 			case OF_KEY_RIGHT:
 				rightPressed = true;
@@ -717,6 +734,7 @@ void ofApp::keyPressed(int key){
 	}
 	else if (key == ' ') {
 		idle = false;
+		alienEmitter->start();
 	}
 }
 
