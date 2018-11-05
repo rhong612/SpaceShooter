@@ -40,7 +40,7 @@ void ofApp::setup(){
 	downPressed = false;
 	isGameOver = false;
 	slidersActive = false;
-	score = 599;
+	score = 0;
 	level = 1;
 	lastRotated = ofGetElapsedTimeMillis();
 	currentAlienCurveIntensity = INITIAL_ALIEN_CURVE_INTENSITY;
