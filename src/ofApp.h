@@ -113,15 +113,15 @@ class ofApp : public ofBaseApp{
 		float lastRotated;
 		float weaponLevel;
 
-		static const int LEVEL_TWO_REQUIREMENT = 5;
-		static const int LEVEL_THREE_REQUIREMENT = 30;
+		static const int LEVEL_TWO_REQUIREMENT = 10;
+		static const int LEVEL_THREE_REQUIREMENT = 50;
 
 		static const int INITIAL_ALIEN_CURVE_INTENSITY = 70;
 		static const int MAX_ALIEN_CURVE_INTENSITY = 500;
 		static const int INITIAL_ZOMBIE_Y_VELOCITY = 60; 
-		static const int MAX_ALIEN_RATE = 990;
-		static const int MAX_ZOMBIE_RATE = 990;
-		static const int MAX_BUG_RATE = 980;
+		static const int MAX_ALIEN_RATE = 985;
+		static const int MAX_ZOMBIE_RATE = 985;
+		static const int MAX_BUG_RATE = 985;
 		static const int INITIAL_BUG_Y_VELOCITY = 130;
 
 		static const int RATE_UP_CHANCE = 20; //20%

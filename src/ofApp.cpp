@@ -287,7 +287,7 @@ void ofApp::randomizeMovement(SpriteSystem* sys) {
 //
 void ofApp::checkLevel() {
 	if (level >= 3) {
-		level = (score / 30) + 2; //Increase level every 30 points after level 3
+		level = (score / 50) + 2; //Increase level every 50 points after level 3
 	}
 	else if (level == 2 && score >= LEVEL_THREE_REQUIREMENT) {
 		level = 3;
@@ -304,20 +304,25 @@ void ofApp::checkLevel() {
 void ofApp::scaleEnemies() {
 	//Increase enemy spawn rate based on level
 	if (level <= 15) {
-		alienEmitter->rate = level * 6 + 900 > MAX_ALIEN_RATE ? MAX_ALIEN_RATE : level * 5 + 900;
+		alienEmitter->rate = level * 6 + 900 > MAX_ALIEN_RATE ? MAX_ALIEN_RATE : level * 6 + 900;
 		zombieEmitter->rate = level * 5 + 600 > MAX_ZOMBIE_RATE ? MAX_ZOMBIE_RATE : level * 5 + 600;
 		bugEmitter->rate = level * 5 + 500 > MAX_BUG_RATE ? MAX_BUG_RATE : level * 5 + 500;
 	}
 	//If over lvl 15, stop spawning aliens
 	else if (level <= 25){
 		alienEmitter->stop();
-		zombieEmitter->rate = level * 6 + 600 > MAX_ZOMBIE_RATE ? MAX_ZOMBIE_RATE : level * 6 + 600;
-		bugEmitter->rate = level * 5 + 900 > MAX_BUG_RATE ? MAX_BUG_RATE : level * 5 + 900;
+		zombieEmitter->rate = level * 7 + 600 > MAX_ZOMBIE_RATE ? MAX_ZOMBIE_RATE : level * 6 + 600;
+		bugEmitter->rate = level * 10 + 750 > MAX_BUG_RATE ? MAX_BUG_RATE : level * 10 + 750;
 	}
-	//If over lvl 25, stop spawning bugs
+	//If over lvl 35, stop spawning bugs
 	else if (level <= 35) {
 		bugEmitter->stop();
-		zombieEmitter->rate = level * 6 + 700 > MAX_ZOMBIE_RATE ? MAX_ZOMBIE_RATE : level * 6 + 700;
+		zombieEmitter->rate = level * 5 + 820 > MAX_ZOMBIE_RATE ? MAX_ZOMBIE_RATE : level * 5 + 820;
+	}
+	//If over lvl 35, spawn everything. No need to scale past this point
+	else if (level <= 35) {
+		alienEmitter->start();
+		zombieEmitter->start();
 	}
 
 	//Alien: Increase curve intensity
