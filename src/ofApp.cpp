@@ -85,7 +85,7 @@ void ofApp::initEnemyEmitters() {
 	//Setup Bug Emitter;
 	bugEmitter = new Emitter();
 	bugEmitter->sys = &bugEnemySystem;
-	bugEmitter->loadSpriteImage("images/random_zombie_thing.png");
+	bugEmitter->loadSpriteImage("images/bug.png");
 	bugEmitter->resizeImage(40, 40);
 	bugEmitter->velocity = ofVec3f(0, INITIAL_BUG_Y_VELOCITY, 0);
 	bugEmitter->lifespan = 50000;
