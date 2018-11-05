@@ -16,7 +16,7 @@ void ofApp::setup(){
 	//Setup turret
 	turretSprite.image.loadImage("images/sprite.png");
 	turretSprite.speed = 500;
-	turretSprite.image.resize(60, 60);
+	turretSprite.image.resize(50, 50);
 	turretSprite.width = turretSprite.image.getWidth();
 	turretSprite.height = turretSprite.image.getHeight();
 	turretSprite.trans.x = ofGetWidth() / 2 - turretSprite.width / 2;
@@ -86,7 +86,7 @@ void ofApp::initEnemyEmitters() {
 	blueZombieEmitter = new Emitter();
 	blueZombieEmitter->sys = &blueZombieEnemySystem;
 	blueZombieEmitter->loadSpriteImage("images/random_zombie_thing.png");
-	blueZombieEmitter->resizeImage(30, 30);
+	blueZombieEmitter->resizeImage(40, 40);
 	blueZombieEmitter->velocity = ofVec3f(0, INITIAL_BLUE_ZOMBIE_Y_VELOCITY, 0);
 	blueZombieEmitter->lifespan = 50000;
 	blueZombieEmitter->direction = 180;
@@ -405,7 +405,7 @@ void ofApp::checkCollisions() {
 					particleEmitter->setVelocity(ofVec3f(0, 0, 0));
 					particleEmitter->sys->addForce(new ImpulseRadialForce(30000.0));
 					particleEmitter->position = ofVec3f(it->trans.x + it->width / 2.0, it->trans.y + it->height / 2.0, 0);
-					particleEmitter->groupSize = 10;
+					particleEmitter->groupSize = 30;
 					particleEmitter->oneShot = true;
 					particleEmitter->start();
 					collisionfulEffectEmitters.push_back(particleEmitter);
@@ -445,17 +445,19 @@ void ofApp::checkCollisions() {
 				if (zombieDied) {
 					destroySoundPlayer.play();
 					score += 20;
-					//Create death explosion effect
-					ParticleEmitter* particleEmitter = new ParticleEmitter();
-					particleEmitter->setLifespan(3);
-					particleEmitter->setParticleRadius(5.0);
-					particleEmitter->setVelocity(ofVec3f(0, 0, 0));
-					particleEmitter->sys->addForce(new ImpulseRadialForce(30000.0));
-					particleEmitter->position = ofVec3f(it->trans.x + it->width / 2.0, it->trans.y + it->height / 2.0, 0);
-					particleEmitter->groupSize = 30;
-					particleEmitter->oneShot = true;
-					particleEmitter->start();
-					collisionfulEffectEmitters.push_back(particleEmitter);
+
+					//Create explosion effect. No collision detection needed.
+					ParticleEmitter* explosionEffectEmitter = new ParticleEmitter();
+					explosionEffectEmitter->setLifespan(0.5);
+					explosionEffectEmitter->setParticleRadius(1.0);
+					explosionEffectEmitter->setVelocity(ofVec3f(0, 0, 0));
+					explosionEffectEmitter->sys->addForce(new ImpulseRadialForce(3000.0));
+					explosionEffectEmitter->position = ofVec3f(it->trans.x + it->width / 2.0, it->trans.y + it->height / 2.0, 0);
+					explosionEffectEmitter->groupSize = 100;
+					explosionEffectEmitter->oneShot = true;
+					explosionEffectEmitter->color = ofColor::blue;
+					explosionEffectEmitter->start();
+					collisionLessEffectEmitters.push_back(explosionEffectEmitter);
 
 
 					int randomNum = rand() % 100;
