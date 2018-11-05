@@ -121,8 +121,8 @@ class ofApp : public ofBaseApp{
 		static const int INITIAL_ZOMBIE_Y_VELOCITY = 60; 
 		static const int MAX_ALIEN_RATE = 990;
 		static const int MAX_ZOMBIE_RATE = 990;
-		static const int MAX_BLUE_ZOMBIE_RATE = 970;
-		static const int INITIAL_BLUE_ZOMBIE_Y_VELOCITY = 130;
+		static const int MAX_BUG_RATE = 980;
+		static const int INITIAL_BUG_Y_VELOCITY = 130;
 
 		static const int RATE_UP_CHANCE = 20; //20%
 		static const int RATE_UP_BONUS = 3;
@@ -151,10 +151,10 @@ class ofApp : public ofBaseApp{
 		vector<Emitter*> enemyEmitters;
 		Emitter* alienEmitter;
 		Emitter* zombieEmitter;
-		Emitter* blueZombieEmitter;
+		Emitter* bugEmitter;
 		SpriteSystem alienEnemySystem;
 		SpriteSystem zombieEnemySystem;
-		SpriteSystem blueZombieEnemySystem;
+		SpriteSystem bugEnemySystem;
 
 		vector<ParticleEmitter*> collisionfulEffectEmitters; //'Dangerous' bullets that can hurt the player
 		vector<ParticleEmitter*> collisionLessEffectEmitters; //Just for visuals. Does not collide with anything

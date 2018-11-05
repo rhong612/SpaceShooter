@@ -82,22 +82,22 @@ void ofApp::initEnemyEmitters() {
 	zombieEmitter->sprite.damage = 20;
 	zombieEmitter->sprite.health = 20;
 
-	//Setup Blue Zombie Emitter;
-	blueZombieEmitter = new Emitter();
-	blueZombieEmitter->sys = &blueZombieEnemySystem;
-	blueZombieEmitter->loadSpriteImage("images/random_zombie_thing.png");
-	blueZombieEmitter->resizeImage(40, 40);
-	blueZombieEmitter->velocity = ofVec3f(0, INITIAL_BLUE_ZOMBIE_Y_VELOCITY, 0);
-	blueZombieEmitter->lifespan = 50000;
-	blueZombieEmitter->direction = 180;
-	blueZombieEmitter->rate = 700;
-	blueZombieEmitter->setPosition(ofVec2f(rand() % ofGetWidth(), 0));
-	blueZombieEmitter->sprite.damage = 30;
-	blueZombieEmitter->sprite.health = 30;
+	//Setup Bug Emitter;
+	bugEmitter = new Emitter();
+	bugEmitter->sys = &bugEnemySystem;
+	bugEmitter->loadSpriteImage("images/random_zombie_thing.png");
+	bugEmitter->resizeImage(40, 40);
+	bugEmitter->velocity = ofVec3f(0, INITIAL_BUG_Y_VELOCITY, 0);
+	bugEmitter->lifespan = 50000;
+	bugEmitter->direction = 180;
+	bugEmitter->rate = 700;
+	bugEmitter->setPosition(ofVec2f(rand() % ofGetWidth(), 0));
+	bugEmitter->sprite.damage = 30;
+	bugEmitter->sprite.health = 30;
 
 	enemyEmitters.push_back(alienEmitter);
 	enemyEmitters.push_back(zombieEmitter);
-	enemyEmitters.push_back(blueZombieEmitter);
+	enemyEmitters.push_back(bugEmitter);
 
 }
 
@@ -213,12 +213,12 @@ void ofApp::update(){
 
 	//Custom movement for specific types of enemies
 	curveVelocity(&alienEnemySystem, currentAlienCurveIntensity);
-	randomizeMovement(&blueZombieEnemySystem);
+	randomizeMovement(&bugEnemySystem);
 
 	//Update enemy systems
 	alienEnemySystem.update();
 	zombieEnemySystem.update();
-	blueZombieEnemySystem.update();
+	bugEnemySystem.update();
 
 	//Update particle emitters
 	for (auto it = begin(collisionfulEffectEmitters); it != end(collisionfulEffectEmitters); it++) {
@@ -291,7 +291,7 @@ void ofApp::checkLevel() {
 	}
 	else if (level == 2 && score >= LEVEL_THREE_REQUIREMENT) {
 		level = 3;
-		blueZombieEmitter->start(); //Blue zombies start appearing at level 3
+		bugEmitter->start(); //Bugs start appearing at level 3
 	}
 	else if (level == 1 && score >= LEVEL_TWO_REQUIREMENT) {
 		level = 2;
@@ -305,14 +305,14 @@ void ofApp::scaleEnemies() {
 	//Increase enemy spawn rate based on level
 	alienEmitter->rate = level * 5 + 900 > MAX_ALIEN_RATE ? MAX_ALIEN_RATE : level * 5 + 900;
 	zombieEmitter->rate = level * 5 + 600 > MAX_ZOMBIE_RATE ? MAX_ZOMBIE_RATE : level * 5 + 600;
-	blueZombieEmitter->rate = level * 5 + 500 > MAX_BLUE_ZOMBIE_RATE ? MAX_BLUE_ZOMBIE_RATE : level * 5 + 500;
+	bugEmitter->rate = level * 5 + 500 > MAX_BUG_RATE ? MAX_BUG_RATE : level * 5 + 500;
 
 	//Alien: Increase curve intensity
 	//Zombie: Increase velocity
-	//Blue zombie: Increase velocity
+	//Bug: Increase velocity
 	currentAlienCurveIntensity = currentAlienCurveIntensity < MAX_ALIEN_CURVE_INTENSITY ? level * INITIAL_ALIEN_CURVE_INTENSITY : MAX_ALIEN_CURVE_INTENSITY;
 	zombieEmitter->velocity = ofVec3f(0, level * 10.0 + INITIAL_ZOMBIE_Y_VELOCITY, 0);
-	blueZombieEmitter->velocity = ofVec3f(0, level * 7.0 + INITIAL_BLUE_ZOMBIE_Y_VELOCITY, 0);
+	bugEmitter->velocity = ofVec3f(0, level * 7.0 + INITIAL_BUG_Y_VELOCITY, 0);
 }
 
 // Simulates a wave-like motion with the given sprites
@@ -432,8 +432,8 @@ void ofApp::checkCollisions() {
 		}
 	}
 
-	//Blue Zombie Collisions
-	for (vector<Sprite>::iterator it = blueZombieEnemySystem.sprites.begin(); it != blueZombieEnemySystem.sprites.end(); it++) {
+	//Bug Collisions
+	for (vector<Sprite>::iterator it = bugEnemySystem.sprites.begin(); it != bugEnemySystem.sprites.end(); it++) {
 		//Contact with player missile
 		for (vector<Sprite>::iterator missileIter = missileSystem.sprites.begin(); missileIter != missileSystem.sprites.end(); missileIter++) {
 			float hDistance = abs((it->trans.x + it->width / 2) - (missileIter->trans.x + missileIter->width / 2));
@@ -643,7 +643,7 @@ void ofApp::draw(){
 		missileSystem.draw();
 		alienEnemySystem.draw();
 		zombieEnemySystem.draw();
-		blueZombieEnemySystem.draw();
+		bugEnemySystem.draw();
 		rateUpSystem.draw();
 		damageUpSystem.draw();
 		weaponUpSystem.draw();
