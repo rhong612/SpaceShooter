@@ -180,6 +180,7 @@ class ofApp : public ofBaseApp{
 		ofTrueTypeFont arialFont;
 
 		ofImage healthBar;
+		ofImage background;
 
 		ofSoundPlayer powerUpSoundPlayer;
 		ofSoundPlayer destroySoundPlayer;

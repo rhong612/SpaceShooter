@@ -28,6 +28,9 @@ void ofApp::setup(){
 	healthBar.loadImage("images/healthBar.png");
 	healthBar.resize(ofGetWidth(), healthBar.getHeight());
 
+	background.loadImage("images/background.png");
+	background.resize(ofGetWidth(), ofGetHeight());
+
 	//Initialize variables
 	moveDir = MoveStop;
 	idle = true;
@@ -626,6 +629,7 @@ void ofApp::stopSprite() {
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+	background.draw(0, 0);
 	if (idle) {
 		arialFont.drawString("Press spacebar to start!", ofGetWidth() / 2 - 200, ofGetHeight() / 2);
 	}
