@@ -1,6 +1,9 @@
 #include "ofMain.h"
 #include "ofApp.h"
 
+//  Raymond Hong - CS 134 SJSU - 11/4/2018
+//  Entry-point of the application
+
 //========================================================================
 int main( ){
 	ofSetupOpenGL(600,1024,OF_WINDOW);			// <-------- setup the GL context

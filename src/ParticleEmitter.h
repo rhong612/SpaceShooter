@@ -1,5 +1,7 @@
 #pragma once
-//  Kevin M. Smith - CS 134 SJSU
+
+//  Raymond Hong - CS 134 SJSU - 11/4/2018
+//  Header file for ParticleEmitter
 
 #include "TransformObject.h"
 #include "ParticleSystem.h"

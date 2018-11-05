@@ -1,5 +1,7 @@
 #include "Particle.h"
 
+//  Raymond Hong - CS 134 SJSU - 11/4/2018
+//  Slightly modified version of Particle.cpp class code. Added a 'color' field to determine Particle's color on draw().
 
 Particle::Particle() {
 
@@ -18,13 +20,14 @@ Particle::Particle() {
 	damage = 10;
 }
 
+// Draws the particle
 void Particle::draw() {
 	ofSetColor(color);
 	//ofSetColor(ofMap(age(), 0, lifespan, 255, 10), 0, 0);
 	ofDrawSphere(position, radius);
 }
 
-// write your own integrator here.. (hint: it's only 3 lines of code)
+// Particle integrator that updates the particle based on velocity/acceleration
 //
 void Particle::integrate() {
 

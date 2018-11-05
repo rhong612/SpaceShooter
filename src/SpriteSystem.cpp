@@ -1,5 +1,8 @@
 #include "ofApp.h"
 
+//  Raymond Hong - CS 134 SJSU - 11/4/2018
+//  Slightly modified version of class code SpriteSystem. Added a check in update() to delete a sprite if it is out-of-bounds on the Y-axis.
+
 //  Add a Sprite to the Sprite System
 //
 void SpriteSystem::add(Sprite s) {

@@ -1,6 +1,8 @@
 #pragma once
 #include "TransformObject.h"
 
+//  Class code
+
 //  Base class for any object that needs a transform.
 //
 TransformObject::TransformObject() {

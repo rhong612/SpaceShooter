@@ -1,6 +1,8 @@
 #include "ofApp.h"
 #include "stdlib.h"
 
+//  Raymond Hong - CS 134 SJSU - 11/4/2018
+//  Main file that does all the heavy-lifting. Sets up all game components and takes care of game loop in update()
 //--------------------------------------------------------------
 void ofApp::setup(){
 	ofSetVerticalSync(true);

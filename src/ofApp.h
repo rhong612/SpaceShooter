@@ -5,6 +5,9 @@
 #include "Particle.h"
 #include "ParticleEmitter.h"
 
+//  Raymond Hong - CS 134 SJSU - 11/4/2018
+//  Header file for ofApp
+
 
 typedef enum {MoveStop, MoveLeft, MoveRight, MoveUp, MoveDown } MoveDir;
 

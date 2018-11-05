@@ -1,5 +1,6 @@
 
-// Kevin M.Smith - CS 134 SJSU
+//  Raymond Hong - CS 134 SJSU - 11/4/2018
+//  Slightly modified version of class code ParticleSystem. Changed ImpulseRadialForce to disregard z-axis.
 
 #include "ParticleSystem.h"
 
